@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connected Journey Simulation — IDCOL DRS</title>
+<meta name="description" content="IDCOL Domestic Rooftop Solar platform — interactive demo prototype — Connected Journey Simulation">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Bengali:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../drs-theme.css?v=8">
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.454.0/dist/umd/lucide.min.js"></script>
+<script src="../drs-sim.js?v=7"></script>
+<script src="../drs-ui.js?v=7"></script>
+
+</head>
+<body data-role="app" data-page="simulation">
+<header class="topbar flex items-center gap-3" style="padding:0 20px">
+  <button id="tb-menu" class="btn btn-ghost btn-sm" aria-label="Menu"><i data-lucide="menu" class="lucide"></i></button>
+  <a href="../app/home.page.html" class="brand" title="IDCOL DRS — Demo home"><img src="../idcol-logo.png" alt="IDCOL — Together for Tomorrow"><span class="prog"><b>DRS Platform</b>Domestic Rooftop Solar Program</span></a>
+  <div style="position:relative">
+    <button id="tb-switcher" class="btn btn-secondary btn-sm" title="Switch profile"><i data-lucide="users" class="lucide"></i> <span id="tb-role">Profile</span> <span id="tb-entity" class="muted" style="font-weight:400;max-width:260px;overflow:hidden;text-overflow:ellipsis"></span> <i data-lucide="chevron-down" class="lucide"></i></button>
+    <div id="tb-switcher-dd" class="dropdown" style="left:0;right:auto;width:440px">
+      <div class="card-head"><h3>Switch profile</h3><span class="tag" style="border-style:dashed">demo / simulation</span><span class="small muted">same shared state</span></div>
+      <div style="padding:12px 14px;display:grid;gap:12px">
+        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">IDCOL Staff</span><span class="small muted flex-1">Program administrator · all DAs</span><a class="btn btn-primary btn-sm" href="../idcol/dashboard.page.html">Open <i data-lucide="arrow-right" class="lucide"></i></a></div>
+        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">DA Agent</span><select id="sw-da" class="input flex-1" style="height:30px;font-size:12px"></select><button id="sw-go-da" class="btn btn-primary btn-sm">Open <i data-lucide="arrow-right" class="lucide"></i></button></div>
+        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">Household</span><select id="sw-hh" class="input flex-1" style="height:30px;font-size:12px"></select><button id="sw-go-hh" class="btn btn-primary btn-sm">Open <i data-lucide="arrow-right" class="lucide"></i></button></div>
+        <hr class="hr">
+        <div class="flex items-center gap-2 wrap"><a class="btn btn-secondary btn-sm" href="../app/simulation.page.html"><i data-lucide="play" class="lucide"></i> Simulation Console</a><a class="btn btn-secondary btn-sm" href="../app/home.page.html"><i data-lucide="home" class="lucide"></i> Demo home</a><button id="tb-reset" class="btn btn-danger btn-sm ml-auto"><i data-lucide="rotate-ccw" class="lucide"></i> Reset data</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="ml-auto flex items-center gap-2">
+    <span class="tag" title="Simulated date"><i data-lucide="calendar" class="lucide w-4"></i> <b id="tb-date">—</b> <span id="tb-step" class="muted"></span></span>
+    <a class="btn btn-secondary btn-sm" href="../app/simulation.page.html"><i data-lucide="play" class="lucide"></i> Simulation</a>
+    <button id="tb-guide" class="btn btn-ghost btn-sm" title="Demo guide"><i data-lucide="circle-help" class="lucide"></i> Guide</button>
+    <div style="position:relative"><button id="tb-bell" class="btn btn-ghost btn-sm" aria-label="Notifications" style="position:relative"><i data-lucide="bell" class="lucide"></i><span id="tb-bell-dot" style="display:none"></span><span id="tb-bell-count"></span></button><div id="tb-notif-dd" class="dropdown"><div class="card-head"><h3>Notifications</h3><span class="small muted">SMS + in-app</span></div><div id="tb-notif-list"></div></div></div>
+    <span id="user-select-wrap" class="flex items-center gap-1"><span class="tag" style="border-style:dashed" title="Demo / simulation tool: switches the acting IDCOL user to demonstrate maker-checker-approver separation">Simulation / acting user</span><select id="user-select" class="input" style="width:auto;height:30px;font-size:12px" title="Simulation / acting user — demo tool for maker-checker"></select></span>
+  </div>
+</header>
+<div class="brand-strip"></div>
+<div class="flex">
+
+<main class="content">
+
+<div class="sim-head">
+  <div>
+    <span class="tag demo-mode"><i data-lucide="sparkles" class="lucide w-4"></i> Guided Demo Mode</span>
+    <h1>Connected Journey Simulation</h1>
+    <div class="sub">One shared demo state across IDCOL, DA and Household.</div>
+  </div>
+  <div class="sim-utils">
+    <span class="tag util-date"><i data-lucide="calendar" class="lucide w-4"></i> <b id="sim-date">—</b><span class="muted" id="sim-counter"></span></span>
+    <button class="btn btn-secondary btn-sm" id="sim-d1">+1 day</button>
+    <button class="btn btn-secondary btn-sm" id="sim-d10">+10 days</button>
+    <span class="vsep"></span>
+    <button class="btn btn-secondary btn-sm" id="sim-reset"><i data-lucide="rotate-ccw" class="lucide"></i> Reset</button>
+    <button class="btn btn-secondary btn-sm" id="sim-prev"><i data-lucide="chevron-left" class="lucide"></i> Prev</button>
+    <button class="btn btn-primary btn-sm" id="sim-next">Next <i data-lucide="chevron-right" class="lucide"></i></button>
+    <button class="btn btn-secondary btn-sm" id="sim-auto"><i data-lucide="play" class="lucide"></i> Auto-play</button>
+  </div>
+</div>
+<div class="section-head"><h2>Choose a journey</h2><span class="sub">each journey runs the real actions on the shared state</span></div>
+<div class="jsel" id="jsel"></div>
+<div class="card story mt-4" id="story"></div>
+<div class="chain-wrap mt-4" id="chain"></div>
+<div class="section-head mt-5"><h2>What this step changed in each portal</h2><span class="sub">live portal views — rows touched by this step are highlighted</span><span class="legend ml-auto"><span class="hl-swatch"></span> changed in this step</span></div>
+<div class="sim-grid mt-3">
+  <section class="panel" id="panel-idcol">
+    <div class="panel-head"><span class="avatar" style="background:var(--mis)">ID</span><div class="flex-1"><div style="font-weight:500">IDCOL Staff</div><div class="small muted">Program Unit · Program-wide view</div></div><a class="link small" data-go="idcol" href="../idcol/dashboard.page.html">Open portal <i data-lucide="arrow-up-right" class="lucide w-4"></i></a></div>
+    <div class="panel-impact" id="impact-idcol"></div>
+    <div class="panel-tabs" data-panel="idcol"><span class="panel-tab active" data-tab="dash">Dashboard</span><span class="panel-tab" data-tab="das">DAs</span><span class="panel-tab" data-tab="batches">Batches</span><span class="panel-tab" data-tab="insp">Inspections</span><span class="panel-tab" data-tab="claims">Claims</span><span class="panel-tab" data-tab="crm">CRM / RMP</span><span class="panel-tab" data-tab="audit">Audit</span></div>
+    <div class="panel-body" id="body-idcol"></div>
+  </section>
+  <section class="panel" id="panel-da">
+    <div class="panel-head"><span class="avatar" style="background:var(--rmp)">DA</span><div class="flex-1"><div style="font-weight:500">DA Agent</div><select id="sim-da" class="input" style="height:26px;font-size:12px;padding:0 6px;width:auto;max-width:240px"></select></div><a class="link small" data-go="da" href="../da/dashboard.page.html">Open portal <i data-lucide="arrow-up-right" class="lucide w-4"></i></a></div>
+    <div class="panel-impact" id="impact-da"></div>
+    <div class="panel-tabs" data-panel="da"><span class="panel-tab active" data-tab="dash">Dashboard</span><span class="panel-tab" data-tab="inv">Inventory</span><span class="panel-tab" data-tab="hh">Households</span><span class="panel-tab" data-tab="onboard">Onboard</span><span class="panel-tab" data-tab="coll">Collections</span><span class="panel-tab" data-tab="claims">Claims</span></div>
+    <div class="panel-body" id="body-da"></div>
+  </section>
+  <section class="panel" id="panel-household">
+    <div class="panel-head"><span class="avatar" style="background:var(--crm)">HH</span><div class="flex-1"><div style="font-weight:500">Household</div><select id="sim-hh" class="input" style="height:26px;font-size:12px;padding:0 6px;width:auto;max-width:240px"></select></div><a class="link small" data-go="hh" href="../household/home.page.html">Open portal <i data-lucide="arrow-up-right" class="lucide w-4"></i></a></div>
+    <div class="panel-impact" id="impact-household"></div>
+    <div class="panel-tabs" data-panel="household"><span class="panel-tab active" data-tab="home">Home</span><span class="panel-tab" data-tab="loan">Loan</span><span class="panel-tab" data-tab="pay">Pay</span><span class="panel-tab" data-tab="receipts">Receipts</span><span class="panel-tab" data-tab="notif">Notifications</span></div>
+    <div class="panel-body" id="body-household"></div>
+  </section>
+</div>
+<details class="more mt-5" id="more"><summary><i data-lucide="chevron-right" class="lucide w-4"></i> Advanced demo detail</summary><div id="more-body" class="more-body"></div></details>
+
+</main>
+</div>
+<footer class="small muted flex wrap gap-3 items-center" style="padding:16px 24px;border-top:1px solid var(--border)"><span>IDCOL DRS Platform — interactive demo prototype</span><span>·</span><span>All data is simulated in your browser; nothing is sent anywhere.</span><span class="ml-auto">Riseup Labs · September 2026</span></footer>
+<script>
+
+var $=UI.$, esc=UI.esc, F=DRS.fmt, G=DRS.get, pill=UI.pill, ic=UI.ic, autoTimer=null;
+var TAB={idcol:'dash',da:'dash',household:'home'};
+var TAB_FOR_STEP={1:{idcol:'das',da:'dash',household:'home'},2:{idcol:'batches',da:'inv',household:'home'},3:{idcol:'insp',da:'hh',household:'home'},4:{idcol:'insp',da:'claims',household:'home'},5:{idcol:'claims',da:'claims',household:'home'},6:{idcol:'dash',da:'coll',household:'receipts'},7:{idcol:'crm',da:'hh',household:'loan'},8:{idcol:'crm',da:'hh',household:'notif'},9:{idcol:'crm',da:'hh',household:'home'},10:{idcol:'crm',da:'coll',household:'receipts'},11:{idcol:'crm',da:'hh',household:'home'}};
+var MOD={MIS:'mis',Inspection:'ins',CRM:'crm',RMP:'rmp'};
+var HH='DRS-KHU-0213', DA='DA-004', HH2='DRS-GAZ-0032';
+var L={ idcolDA:['IDCOL · DA Management','../idcol/da-management.page.html'], idcolBatch:['IDCOL · Batch Verification','../idcol/batch-verification.page.html'], idcolInv:['IDCOL · Inventory','../idcol/inventory.page.html'], idcolInsp:['IDCOL · Inspection Queue','../idcol/inspections.page.html'], idcolClaims:['IDCOL · Claims & Disbursement','../idcol/claims.page.html'], idcolLedger:['IDCOL · Loan Ledger','../idcol/crm-loan-ledger.page.html'], idcolPortfolio:['IDCOL · CRM Portfolio','../idcol/crm-portfolio.page.html'], idcolEws:['IDCOL · Early Warning','../idcol/early-warning.page.html'], idcolHalt:['IDCOL · Halt / Resume Control','../idcol/crm-halt-resume.page.html'], idcolRmp:['IDCOL · RMP Monitoring','../idcol/rmp-monitoring.page.html'], idcolCmd:['IDCOL · Command Log','../idcol/rmp-commands.page.html'], idcolRecon:['IDCOL · Reconciliation & Exceptions','../idcol/reconciliation.page.html'], idcolTickets:['IDCOL · Complaints / Tickets','../idcol/tickets.page.html'], idcolSettings:['IDCOL · Settings','../idcol/settings.page.html'], idcolAudit:['IDCOL · Audit Trail','../idcol/audit-log.page.html'],
+  daDash:['DA · Dashboard','../da/dashboard.page.html'], daInv:['DA · Inventory','../da/inventory.page.html'], daHH:['DA · Households','../da/households.page.html'], daOnboard:['DA · Onboard Household','../da/onboard-household.page.html'], daClaims:['DA · Refinance Claims','../da/claims.page.html'], daColl:['DA · Collections','../da/collections.page.html'], daFacility:['DA · IDCOL Facility','../da/idcol-facility.page.html'], daRmp:['DA · Monitoring','../da/rmp.page.html'], daTickets:['DA · Complaints / Tickets','../da/tickets.page.html'],
+  hhHome:['Household · Home','../household/home.page.html'], hhSystem:['Household · My System','../household/system.page.html'], hhLoan:['Household · My Loan','../household/loan.page.html'], hhPay:['Household · Pay Installment','../household/pay.page.html'], hhReceipts:['Household · Receipts','../household/receipts.page.html'], hhComplaint:['Household · Complaint','../household/complaint.page.html'] };
+var JOURNEYS=[
+  {n:1,title:'DA Setup & Enablement',icon:'building-2',steps:[1,2],mods:['MIS'],purpose:'IDCOL brings a new Demand Aggregator into the program and gives it verified equipment stock.'},
+  {n:2,title:'Household Onboarding',icon:'user-plus',steps:[3],mods:['MIS','CRM'],purpose:'The DA registers a household using serials from its own stock; IDCOL inspection is scheduled.'},
+  {n:3,title:'Inspection to Refinance',icon:'clipboard-check',steps:[4,5],mods:['Inspection','MIS'],purpose:'IDCOL verifies the installed system; the claim becomes eligible, is approved and disbursed.'},
+  {n:4,title:'Payment & Receipt',icon:'wallet',steps:[6],mods:['CRM'],purpose:'The household pays an installment; the receipt and updated loan are visible to the DA and IDCOL.'},
+  {n:5,title:'Overdue, Halt & Resume',icon:'power',steps:[7,8,9,10],mods:['CRM','RMP'],purpose:'An unpaid installment leads to a warning, a halt decision, RMP execution and a resume once paid.'},
+  {n:6,title:'Support & Control',icon:'life-buoy',steps:[11],mods:['CRM','RMP'],purpose:'Manual override, complaints, reconciliation, reversals and policy settings — always authorised and logged.'}
+];
+var STEP={
+  1:{chain:[['idcol','Approves the DA and opens its facilities'],['da','Gets portal access — facility ready, no stock yet']],t:'IDCOL onboards a new DA',what:['Sundarban Solar Foundation is created as a Demand Aggregator','Refinance and advance facilities are opened','Bank guarantee recorded as security'],dep:'Equipment batches can only be allotted to a DA that exists and has an open facility.',impact:{idcol:'New DA is active in the program',da:'Facility opened — no stock yet',hh:'Not involved yet'},links:['idcolDA','daDash','daFacility']},
+  2:{chain:[['da','Declares equipment batches with PSI reports'],['idcol','Verifies the batches'],['da','Serials appear in its own stock']],t:'Batches verified and allotted to the DA',what:['The DA declares equipment batches with PSI test reports','IDCOL verifies the batches','190 serials move into the DA’s own stock'],dep:'Household onboarding cannot happen until verified inventory is available.',impact:{idcol:'Batches verified and allotted',da:'Usable stock is now available',hh:'Not involved yet'},links:['idcolBatch','daInv','idcolInv']},
+  3:{chain:[['da','Onboards the household from its own stock'],['hh','System registered — verification pending'],['idcol','Receives the inspection request']],t:'DA onboards a household',what:['Rahima Begum is registered with a 4 kWp package','Panel, inverter and battery serials come from the DA’s own stock','A 60-month schedule is created and IDCOL receives an inspection request'],dep:'The refinance claim stays Not eligible until IDCOL inspects the system.',impact:{idcol:'Inspection request received',da:'Household onboarded from own stock',hh:'System registered — verification pending'},links:['daHH','idcolInsp','hhHome']},
+  4:{chain:[['idcol','Inspects the roof — serials match, checklist passed'],['hh','System verified'],['da','Refinance claim becomes Eligible']],t:'IDCOL inspection passes',what:['Serials found on the roof match the onboarding record','Site location and checklist confirmed by the inspector','The refinance claim becomes Eligible'],dep:'A claim can only be prepared after the inspection has passed.',impact:{idcol:'Inspection passed — claim eligible',da:'Claim can now be prepared',hh:'System verified'},links:['idcolInsp','idcolClaims','hhHome']},
+  5:{chain:[['da','Prepares and submits the claim'],['idcol','Reviews, approves and disburses — two different users'],['da','Claim paid — refinance ledger updated']],t:'Claim submitted, approved and disbursed',what:['The DA prepares and submits the claim','IDCOL reviews and approves it — two different users','Amount disbursed; the DA’s refinance ledger is updated'],dep:'Disbursement depends on a passed inspection and separate reviewer and approver.',impact:{idcol:'Claim approved and disbursed',da:'Claim paid — ledger updated',hh:'No change'},links:['idcolClaims','daClaims','daFacility']},
+  6:{chain:[['hh','Pays installment 1 via bKash — receipt issued'],['da','Collection appears in its portfolio'],['idcol','Payment posted to the loan ledger']],t:'Household pays the first installment',what:['৳ 5,260 paid through bKash','Receipt issued instantly','Loan balance and schedule updated'],dep:'Every payment feeds the same loan ledger that the DA and IDCOL see.',impact:{idcol:'Payment posted to the loan ledger',da:'Collection visible in portfolio',hh:'Receipt issued — balance updated'},links:['hhReceipts','daColl','idcolLedger']},
+  7:{chain:[['sys','Clock moves one month — installment 2 due'],['hh','Due notification received'],['da','Account shown as due']],t:'Installment 2 falls due',what:['One month has passed','Installment 2 is due today','A due notification is sent to the household'],dep:'Overdue days start counting if no payment arrives.',impact:{idcol:'No action yet',da:'Account shown as due',hh:'Installment due — reminder sent'},links:['hhLoan','daHH','idcolPortfolio']},
+  8:{chain:[['sys','8 days overdue'],['hh','Warning — pay within the grace period'],['idcol','Account listed under Pending halt'],['da','Overdue flagged']],t:'Overdue warning issued',what:['8 days overdue','The household is warned to pay within the grace period','IDCOL sees the account under Pending halt'],dep:'A halt is decided only if the overdue passes the program threshold.',impact:{idcol:'Account listed as pending halt',da:'Overdue account flagged',hh:'Warning received'},links:['idcolHalt','idcolEws','hhHome']},
+  9:{chain:[['sys','Overdue passes the program threshold'],['idcol','CRM decides HALT — RMP executes and logs it'],['hh','System halted — pay to resume'],['da','System shows Halted']],t:'CRM decides HALT, RMP executes it',what:['Overdue passes the program threshold','CRM decides to halt the system','RMP sends the command — the inverter stops'],dep:'The system resumes only when the overdue is cleared.',impact:{idcol:'Halt executed and logged',da:'System halted for overdue',hh:'System halted — pay to resume'},links:['idcolRmp','idcolCmd','hhPay']},
+  10:{chain:[['hh','Pays the overdue via Nagad'],['idcol','RESUME executed and logged'],['da','Collection received — system active']],t:'Payment clears the overdue — RESUME',what:['৳ 5,260 paid through Nagad','Overdue cleared','RESUME command sent — the system runs again'],dep:'Resume is automatic once the overdue is cleared; no manual step is needed.',impact:{idcol:'Resume executed and logged',da:'Collection received — system active',hh:'System resumed after payment'},links:['hhReceipts','idcolCmd','daColl']},
+  11:{chain:[['idcol','Manual HALT with a reason'],['hh','System halted (safety)'],['idcol','Manual RESUME after the fault is cleared'],['da','Status visible in monitoring']],t:'IDCOL manual override',what:['IDCOL halts a system for a safety fault, with a reason','Resumes it after the fault is cleared','Both commands logged with operator name'],dep:'Manual control is always authorised, reasoned and logged.',impact:{idcol:'Manual halt and resume logged',da:'Status visible for its system',hh:'Status updated'},links:['idcolCmd','idcolTickets','idcolRecon','idcolSettings']}
+};
+function journeyOf(n){ for(var i=0;i<JOURNEYS.length;i++) if(JOURNEYS[i].steps.indexOf(n)>=0) return JOURNEYS[i]; return null; }
+function modTags(list){ return list.map(function(m){return '<span class="tag m-'+MOD[m]+'">'+m+'</span>';}).join(''); }
+function stateLabel(v){ return v==='running'?'Running':v==='halted'?'Halted':v==='offline'?'Offline':v||'—'; }
+function focus(n){ return n===11?{da:G.household(HH2)?G.household(HH2).daId:'DA-001',hh:HH2}:{da:DA,hh:HH}; }
+function entities(n,S){
+  var out=[], f=focus(n), da=G.da(f.da), hh=G.household(f.hh);
+  if(da) out.push({id:da.id,name:da.name,st:da.status||'Active'});
+  if(n>=2&&n<=2){ S.batches.filter(function(b){return b.daId===DA;}).forEach(function(b){out.push({id:b.id,name:'Batch',st:b.status});}); }
+  if(n>=3&&hh){ out.push({id:hh.systemId,name:hh.name,st:stateLabel(hh.inverterState)}); }
+  if(n>=3&&n<=5){ var c=S.claims.filter(function(c){return c.systemId===HH;})[0]; if(c) out.push({id:c.id,name:'Refinance claim',st:c.status}); }
+  if(n===4){ var i=S.inspections.filter(function(x){return x.systemId===HH;})[0]; if(i) out.push({id:i.id,name:'Inspection',st:i.result}); }
+  if(n===6||n===10){ var p=S.payments.filter(function(p){return p.systemId===HH&&p.status==='Success';}).slice(-1)[0]; if(p) out.push({id:p.receiptNo,name:'Receipt',st:'Successful'}); }
+  if(n>=7&&n<=10){ var b=G.balances(HH); out.push({id:'Loan',name:hh?hh.systemId:'',st:b.overdue>0?'Overdue '+b.overdueDays+' d':'Up to date'}); }
+  if(n===11&&hh){ out.push({id:hh.systemId,name:hh.name,st:stateLabel(hh.inverterState)}); }
+  var seen={}; return out.filter(function(e){var k=e.id+e.st; if(seen[k])return false; seen[k]=1; return true;});
+}
+function liveStatus(role,n,S){
+  var f=focus(n), da=G.da(f.da), hh=G.household(f.hh), c=S.claims.filter(function(c){return c.systemId===HH;})[0], b=hh?G.balances(hh.systemId):null;
+  if(role==='idcol'){ if(n<=2) return pill(da?'Active':'Pending','DA '+(da?'active':'pending')); if(n<=4) return c?pill(c.status,'Claim '+c.status):pill('Pending'); if(n===5) return c?pill(c.status,'Claim '+c.status):pill('Pending'); if(n===6) return pill('Success','Payment posted'); if(n===7) return pill('Due today','Installment due'); if(n===8) return pill('Pending','Pending halt'); if(n===9) return pill('halted','Halted'); if(n===10) return pill('Running','Resumed'); return pill('ACK','Halt + resume logged'); }
+  if(role==='da'){ if(n===1) return pill('Active','Facility open'); if(n===2) return pill('Verified',G.daKpis(DA).inStock+' units in stock'); if(n===3) return pill('Pending','Inspection pending'); if(n<=5) return c?pill(c.status,'Claim '+c.status):''; if(n===6||n===10) return pill('Success','Collection received'); if(n===7) return pill('Due today','Account due'); if(n===8) return pill('Pending','Overdue '+(b?b.overdueDays:0)+' d'); if(n===9) return pill('halted','System halted'); return hh?pill(hh.inverterState,stateLabel(hh.inverterState)):''; }
+  if(!hh||n<3) return '<span class="pill pill-neutral">Not involved</span>';
+  if(n===3) return pill('Pending','Verification pending'); if(n===4||n===5) return pill('Verified','System verified'); if(n===6||n===10) return pill('Success','Receipt issued'); if(n===7) return pill('Due today','Installment due'); if(n===8) return pill('Pending','Overdue warning'); if(n===9) return pill('halted','System halted'); return pill(hh.inverterState,stateLabel(hh.inverterState));
+}
+function linkBtn(key,cls){ var l=L[key]; return '<a class="btn '+(cls||'btn-secondary btn-sm')+'" data-go="'+key+'" href="'+l[1]+'">'+ic('arrow-up-right','w-4')+' '+esc(l[0])+'</a>'; }
+function renderJsel(S){
+  var cur=S.sim.step;
+  $('#jsel').innerHTML=JOURNEYS.map(function(j){ var last=j.steps[j.steps.length-1], first=j.steps[0]; var state=(cur>=first&&cur<=last)?'active':(cur>last?'done':''); var range=first===last?'Step '+first:'Steps '+first+'–'+last;
+    return '<button class="jsel-item '+state+'" data-j="'+j.n+'"><span class="j-n">'+(state==='done'?ic('check','w-4'):j.n)+'</span><span class="j-ic">'+ic(j.icon)+'</span><span class="j-t">'+esc(j.title)+'</span><span class="j-r small muted">'+range+'</span><span class="j-m">'+j.mods.map(function(m){return '<i class="dot bg-'+MOD[m]+'" title="'+m+'"></i>';}).join('')+'</span></button>'; }).join('');
+}
+function renderStory(S){
+  var n=S.sim.step, steps=DRS.scenario.steps, el=$('#story');
+  if(n===0){ var j=JOURNEYS[0];
+    el.innerHTML='<div class="story-main"><div class="eyebrow">Ready to begin</div><h2>Pick a journey above, or press Next</h2><p class="muted" style="max-width:640px">Each journey runs real actions on one shared demo state. Everything you see here can also be opened in the full IDCOL, DA and Household portals.</p><div class="flex gap-2 wrap mt-3"><button class="btn btn-primary" data-j="1">'+ic('play')+' Start Journey 1 — '+esc(j.title)+'</button><a class="btn btn-secondary" href="../app/home.page.html">'+ic('home')+' Demo home</a></div></div><div class="story-side"><div class="eyebrow">The six journeys</div><ol class="bullets mt-2">'+JOURNEYS.map(function(j){return '<li>'+esc(j.title)+'</li>';}).join('')+'</ol></div>';
+    $('#sim-counter').textContent='· step 0 of '+steps.length; return; }
+  var st=steps[n-1], info=STEP[n], j=journeyOf(n), idx=j.steps.indexOf(n), next=n<steps.length?steps[n]:null, nextInfo=next?STEP[next.n]:null;
+  var strip=j.steps.map(function(s){var k=s<n?'done':s===n?'current':''; return '<button class="step-dot '+k+'" data-goto="'+s+'" title="Step '+s+'">'+(s<n?ic('check','w-4'):s)+'<span>'+esc(STEP[s].t)+'</span></button>';}).join('');
+  var ents=entities(n,S).map(function(e){return '<span class="ent"><span class="mono">'+esc(e.id)+'</span><span class="muted small">'+esc(e.name)+'</span>'+pill(e.st)+'</span>';}).join('');
+  el.innerHTML='<div class="story-main"><div class="flex items-center gap-2 wrap"><span class="eyebrow">Journey '+j.n+' of '+JOURNEYS.length+' · '+esc(j.title)+'</span><span class="small muted">· step '+n+' of '+steps.length+'</span></div><div class="small muted mt-1">'+esc(j.purpose)+'</div>'+
+    (j.steps.length>1?'<div class="step-strip mt-3">'+strip+'</div>':'')+
+    '<h2 class="mt-3">'+esc(info.t)+'</h2><div class="flex gap-1 wrap mt-1">'+modTags(st.modules)+'<span class="tag" style="border-style:dashed">'+ic('user','w-4')+' '+esc(st.who)+'</span></div>'+
+    '<div class="story-cols mt-4"><div><div class="eyebrow">What happened</div><ul class="bullets mt-2">'+info.what.map(function(w){return '<li>'+esc(w)+'</li>';}).join('')+'</ul></div><div><div class="eyebrow">Why the next step depends on it</div><div class="dep mt-2">'+ic('link','w-4')+' '+esc(info.dep)+'</div></div></div>'+
+    '<div class="up-next mt-4">'+(next?'<span class="eyebrow">Up next</span><span>Step '+next.n+' — '+esc(nextInfo.t)+'</span><button class="btn btn-primary btn-sm ml-auto" id="story-next">Run next step '+ic('chevron-right')+'</button>':'<span class="eyebrow">Scenario complete</span><span>All 11 steps done — keep exploring the portals, or Reset to run it again.</span><button class="btn btn-secondary btn-sm ml-auto" id="story-reset">'+ic('rotate-ccw')+' Reset</button>')+'</div></div>'+
+    '<div class="story-side"><div class="eyebrow">Entities involved</div><div class="ents mt-2">'+(ents||'<span class="small muted">—</span>')+'</div><div class="eyebrow mt-4">Open the relevant page</div><div class="qlinks mt-2">'+info.links.map(function(k){return linkBtn(k);}).join('')+'</div>'+(n===11?relatedSupport(S):'')+'</div>';
+  $('#sim-counter').textContent='· step '+n+' of '+steps.length;
+}
+function relatedSupport(S){
+  var open=function(a,f){return a.filter(f).length;};
+  var rows=[[ 'idcolTickets', open(S.complaints||[],function(t){return t.status!=='Resolved'&&t.status!=='Closed';})+' open complaints'],[ 'idcolRecon', open(S.exceptions||[],function(e){return e.status!=='Resolved'&&e.status!=='Matched';})+' open exceptions'],[ 'idcolLedger', open(S.reversalRequests||[],function(r){return /pending/i.test(r.status);})+' reversal requests pending'],[ 'idcolSettings','policy thresholds — maker / checker']];
+  return '<div class="eyebrow mt-4">Also in this journey</div><div class="related mt-2">'+rows.map(function(r){return '<a data-go="'+r[0]+'" href="'+L[r[0]][1]+'"><span>'+esc(L[r[0]][0].replace('IDCOL · ',''))+'</span><span class="small muted">'+esc(r[1])+'</span>'+ic('arrow-up-right','w-4')+'</a>';}).join('')+'</div>';
+}
+
+/* ---------- live portal panels (shared engine actions) ---------- */
+function money(n){return F.money(n);}
+function miniKpi(l,v,s){return '<div class="mini-kpi"><div class="label">'+l+'</div><div class="value">'+v+'</div><div class="sub">'+(s||'')+'</div></div>';}
+function tbl(head,rows,cols,empty){ return '<div class="table-wrap"><table class="tbl tbl-compact"><thead><tr>'+head.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead><tbody>'+(rows.length?rows.map(function(r){return '<tr>'+cols.map(function(c){return '<td>'+(c(r)==null?'—':c(r))+'</td>';}).join('')+'</tr>';}).join(''):'<tr class="empty"><td colspan="'+head.length+'">'+(empty||'Nothing yet')+'</td></tr>')+'</tbody></table></div>'; }
+function card(title,body,extra){return '<div class="card"><div class="card-head" style="padding:8px 12px"><h3 style="font-size:13px">'+title+'</h3>'+(extra||'')+'</div><div style="padding:10px 12px;display:grid;gap:8px">'+body+'</div></div>';}
+/* ---------- IDCOL panel ---------- */
+function renderIdcol(S){
+  var k=G.programKpis(), t=TAB.idcol, h='';
+  if(t==='dash'){
+    h+='<div class="mini-kpis">'+miniKpi('Active DAs',k.activeDAs,'')+miniKpi('Systems',k.systems,k.kwp+' kWp')+miniKpi('Collections / month',money(k.collectionsMonth,{}),'eff. '+k.collectionEfficiency+'%')+miniKpi('Overdue accounts',k.overdueAccounts,money(k.overdue))+miniKpi('Halted',k.halted,k.offline+' offline')+miniKpi('Claims to approve',k.claimsAwaiting,k.claimsEligible+' eligible')+'</div>';
+    var pend=[]; S.inspections.filter(function(x){return x.result==='Pending';}).forEach(function(x){pend.push({t:'Inspection',r:x.systemId,s:'Pending'});}); S.claims.filter(function(c){return c.status==='Prepared'||c.status==='Eligible';}).forEach(function(c){pend.push({t:'Claim '+c.status.toLowerCase(),r:c.systemId,s:c.status});}); S.batches.filter(function(b){return b.status==='Pending';}).forEach(function(b){pend.push({t:'Batch to verify',r:b.id,s:'Pending'});}); S.households.filter(function(x){return x.pendingConnectivityHalt;}).forEach(function(x){pend.push({t:'Connectivity halt',r:x.systemId,s:'Offline'});});
+    h+=card('Pending actions',tbl(['Type','Ref','Status'],pend.slice(0,7),[function(r){return esc(r.t);},function(r){return '<span class="mono">'+esc(r.r)+'</span>';},function(r){return pill(r.s);}],'Nothing pending'));
+    h+=card('Recent audit',tbl(['Time','Action','Entity'],S.audit.slice(-5).reverse(),[function(a){return '<span class="mono small">'+F.dt(a.ts).slice(-5)+'</span>';},function(a){return '<span class="mono small">'+esc(a.action)+'</span>';},function(a){return '<span class="mono small">'+esc(a.entityId)+'</span>';}]));
+  } else if(t==='das'){
+    h+=card('Demand Aggregators',tbl(['DA','Form','Systems','Headroom','Status'],S.das,[function(d){return esc(d.name)+'<div class="small muted">'+d.districts.join(', ')+'</div>';},function(d){return d.legalForm;},function(d){return G.daKpis(d.id).systems;},function(d){return '<span class="num">'+money(G.daKpis(d.id).headroom,{})+'</span>';},function(d){return pill(d.status);}]),'<button class="btn btn-primary btn-sm ml-auto" id="ip-onboard-da">'+ic('plus')+' Onboard DA</button>');
+  } else if(t==='batches'){
+    h+=card('PSI batches',tbl(['Batch','DA','Model','Qty','Status',''],S.batches.slice().reverse(),[function(b){return '<span class="mono">'+b.id+'</span>';},function(b){return esc((G.da(b.daId)||{}).name||b.daId).split(' ')[0];},function(b){var c=G.cat(b.catalogueId);return esc(c.brand+' '+c.model);},function(b){return b.quantity;},function(b){return pill(b.status);},function(b){return b.status==='Pending'?'<button class="btn btn-primary btn-sm" data-verify="'+b.id+'">Verify &amp; allot</button>':'<span class="small muted">'+esc(b.verifiedBy||'')+'</span>';}]));
+  } else if(t==='insp'){
+    h+=card('Inspection queue',tbl(['System','DA','Serial check','Result',''],S.inspections.slice().reverse(),[function(x){return '<span class="mono">'+x.systemId+'</span>';},function(x){return esc((G.da(x.daId)||{}).name||'').split(' ')[0];},function(x){return x.mismatch==null?'<span class="muted">—</span>':x.mismatch?pill('Mismatch'):pill('Match');},function(x){return pill(x.result);},function(x){return x.result==='Pending'?'<button class="btn btn-primary btn-sm" data-inspect="'+x.id+'">Inspect</button>':'';}]));
+  } else if(t==='claims'){
+    h+=card('Refinance claims',tbl(['Claim','System','Amount','Status',''],S.claims.slice().reverse(),[function(c){return '<span class="mono">'+c.id+'</span>';},function(c){return '<span class="mono">'+c.systemId+'</span>';},function(c){return '<span class="num">'+money(c.amount)+'</span>';},function(c){return pill(c.status)+(c.maker?'<div class="small muted">'+esc(c.maker)+(c.checker?' → '+esc(c.checker):'')+'</div>':'');},function(c){var a={Submitted:['prepare','Review'],'Under review':['approve','Approve'],Approved:['disburse','Disburse']}[c.status]; return a?'<button class="btn btn-primary btn-sm" data-claim="'+c.id+'" data-action="'+a[0]+'">'+a[1]+'</button>':(c.status==='On hold'?'<button class="btn btn-secondary btn-sm" data-claim="'+c.id+'" data-action="release">Release</button>':(c.status==='Eligible'||c.status==='Draft')?'<span class="small muted">awaiting DA</span>':'');}]));
+    h+='<div class="callout small">Maker-checker: the DA submits; <b>Review</b> as the acting user, then switch the acting user (top bar) to <b>Approve</b>; same-user approval is refused and DAs cannot approve their own claims.</div>';
+  } else if(t==='crm'){
+    var q=G.haltQueues();
+    h+='<div class="mini-kpis">'+miniKpi('Auto-halt due',q.autoDue.length,'overdue ≥ '+S.settings.pendingHaltWarningDay+' d')+miniKpi('Halted',q.halted.length,'')+miniKpi('Pending connectivity',q.connectivity.length,'offline ≥ '+S.settings.connectivityHaltDays+' d')+miniKpi('Rule','&gt; '+S.settings.haltOverdueDays+' d','overdue → HALT')+'</div>';
+    var rows=q.autoDue.map(function(x){return {hh:x.hh,s:'Overdue '+x.b.overdueDays+' d · halt in '+x.daysLeft+' d',k:'warning',act:'HALT'};}).concat(q.halted.map(function(x){return {hh:x.hh,s:'Halted ('+x.hh.haltReason+')',k:'error',act:'RESUME'};}));
+    h+=card('Halt / resume control',tbl(['System','State','Manual override'],rows,[function(r){return '<span class="mono">'+r.hh.systemId+'</span><div class="small muted">'+esc(r.hh.name)+'</div>';},function(r){return '<span class="pill pill-'+r.k+'">'+esc(r.s)+'</span>';},function(r){return '<button class="btn '+(r.act==='HALT'?'btn-danger':'btn-success')+' btn-sm" data-cmd="'+r.act+'" data-sys="'+r.hh.systemId+'">'+r.act+'</button>';}],'No accounts in halt queues'),'<div class="ml-auto flex gap-2"><select id="ip-sys" class="input" style="height:26px;font-size:11px;width:150px">'+S.households.map(function(x){return '<option value="'+x.systemId+'">'+x.systemId+' · '+x.inverterState+'</option>';}).join('')+'</select><button class="btn btn-danger btn-sm" data-cmd="HALT" data-sys="*">Halt</button><button class="btn btn-success btn-sm" data-cmd="RESUME" data-sys="*">Resume</button></div>');
+    h+=card('RMP command log',tbl(['Time','System','Cmd','Trigger','Result'],S.commands.slice(-6).reverse(),[function(c){return '<span class="mono small">'+F.dt(c.ts)+'</span>';},function(c){return '<span class="mono small">'+c.systemId+'</span>';},function(c){return '<b>'+c.command+'</b>';},function(c){return esc(c.trigger)+'<div class="small muted">'+esc(c.operator)+'</div>';},function(c){return pill(c.result);}]));
+  } else if(t==='audit'){
+    h+=card('Audit trail (last 12)',tbl(['Time','Actor','Action','Entity'],S.audit.slice(-12).reverse(),[function(a){return '<span class="mono small">'+F.dt(a.ts)+'</span>';},function(a){return esc(a.actor);},function(a){return '<span class="mono small">'+esc(a.action)+'</span>';},function(a){return '<span class="mono small">'+esc(a.entityId)+'</span>'+(a.reason?'<div class="small muted">'+esc(a.reason)+'</div>':'');}]));
+  }
+  $('#body-idcol').innerHTML=h; bindIdcol();
+}
+function bindIdcol(){
+  var b=$('#ip-onboard-da'); if(b) b.addEventListener('click',onboardDaModal);
+  UI.$$('#body-idcol [data-verify]').forEach(function(x){x.addEventListener('click',function(){UI.run(function(){DRS.act.verifyBatch(x.getAttribute('data-verify'),UI.actor());},'Batch verified — serials allotted to DA inventory');});});
+  UI.$$('#body-idcol [data-inspect]').forEach(function(x){x.addEventListener('click',function(){inspectModal(x.getAttribute('data-inspect'));});});
+  UI.$$('#body-idcol [data-claim]').forEach(function(x){x.addEventListener('click',function(){UI.run(function(){DRS.act.claimAction(x.getAttribute('data-claim'),x.getAttribute('data-action'),UI.actor());},'Claim '+x.getAttribute('data-action')+'d');});});
+  UI.$$('#body-idcol [data-cmd]').forEach(function(x){x.addEventListener('click',function(){var sys=x.getAttribute('data-sys'); if(sys==='*') sys=$('#ip-sys').value; UI.confirm({title:'Manual '+x.getAttribute('data-cmd')+' — '+sys,body:'Manual override by an authorised IDCOL agent. Logged with trigger "manual", operator and reason (§3.5.1).',reason:'e.g. safety inspection / fault cleared',ok:'Issue '+x.getAttribute('data-cmd'),danger:x.getAttribute('data-cmd')==='HALT'}).then(function(r){if(r) UI.run(function(){DRS.act.manualCommand(sys,x.getAttribute('data-cmd'),r,UI.actor());},x.getAttribute('data-cmd')+' issued via RMP');});});});
+}
+function onboardDaModal(){
+  UI.modal({title:'Onboard Demand Aggregator',icon:'building-2',wide:true,body:'<div class="grid-2"><div class="field"><label>Legal name</label><input id="f-name" class="input" value="Sundarban Solar Foundation"></div><div class="field"><label>Legal form</label><select id="f-form" class="input"><option>NGO</option><option>MFI</option><option>Private</option></select></div><div class="field"><label>Registration no.</label><input id="f-reg" class="input" value="NGOAB-0417"></div><div class="field"><label>Districts</label><input id="f-dist" class="input" value="Khulna, Satkhira"></div><div class="field"><label>Refinance limit (৳)</label><input id="f-limit" class="input num" value="500000000"></div><div class="field"><label>Advance facility limit (৳)</label><input id="f-adv" class="input num" value="50000000"></div><div class="field"><label>Bank Guarantee (৳)</label><input id="f-bg" class="input num" value="100000000"></div><div class="field"><label>BG bank / expiry</label><div class="flex gap-2"><input id="f-bgbank" class="input" value="Janata Bank"><input id="f-bgexp" class="input" type="date" value="2027-09-30"></div></div><div class="field"><label>DSRA balance (৳)</label><input id="f-dsra" class="input num" value="2500000"></div><div class="field"><label>Personal guarantee</label><input id="f-pg" class="input" value="Dr. Selina Haque (ED)"></div></div><div class="callout small">Creates the DA master, two ledgers (Advance · Refinance) and the security register; recorded in the audit trail (§3.3.2).</div>',footer:'<button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" id="f-ok">Create DA</button>',onOpen:function(ov){$('#f-ok',ov).addEventListener('click',function(){UI.run(function(){DRS.act.onboardDA({name:$('#f-name').value,legalForm:$('#f-form').value,registrationNo:$('#f-reg').value,districts:$('#f-dist').value.split(',').map(function(s){return s.trim();}).filter(Boolean),limit:$('#f-limit').value,advanceLimit:$('#f-adv').value,bg:$('#f-bg').value,bgBank:$('#f-bgbank').value,bgExpiry:$('#f-bgexp').value,dsra:$('#f-dsra').value,pg:[$('#f-pg').value]},UI.actor()); UI.closeModal();},'DA onboarded — ledgers and security register created');});}});
+}
+function inspectModal(id){
+  var S=DRS.state(); var insp=S.inspections.filter(function(x){return x.id===id;})[0]; var hh=G.household(insp.systemId); var claim=S.claims.filter(function(c){return c.systemId===insp.systemId;})[0];
+  var rows=hh.panelSerials.map(function(sn,i){return {c:'Panel '+(i+1),on:sn,key:'p'+i};}).concat([{c:'Inverter',on:hh.inverterSerial,key:'inv'},{c:'Battery',on:hh.batterySerial,key:'bat'}]);
+  UI.modal({title:'Inspection '+insp.id+' — '+insp.systemId,icon:'clipboard-check',wide:true,body:'<div class="flex gap-3 wrap small muted"><span>'+esc(hh.name)+' · '+esc(hh.upazila)+', '+esc(hh.district)+'</span><span>·</span><span>Onboarding GPS <span class="mono">'+hh.gps.lat+', '+hh.gps.lng+'</span> · on-site distance <b>14 m</b></span><span>·</span><span>Refinance amount for verification <b>'+money(claim.amount)+'</b> (max '+money(claim.packageMax)+')</span></div><div class="flex items-center gap-2"><button class="btn btn-secondary btn-sm" id="i-scan">'+ic('scan-line')+' Scan serials on site</button><label class="check small"><input type="checkbox" id="i-sub"> simulate substituted inverter (mismatch)</label></div><div class="table-wrap"><table class="tbl tbl-compact"><thead><tr><th>Component</th><th>Onboarded (DA)</th><th>Scanned on site</th><th>Check</th></tr></thead><tbody id="i-rows">'+rows.map(function(r){return '<tr><td>'+r.c+'</td><td class="mono">'+r.on+'</td><td><input class="input mono" style="height:28px;font-size:12px" data-key="'+r.key+'" placeholder="scan…"></td><td data-chk="'+r.key+'">'+pill('Pending')+'</td></tr>';}).join('')+'</tbody></table></div><div class="grid-2"><div class="field"><label>Checklist (12 items vs technical standard)</label><div class="small muted">All items marked Pass by default · geotagged photos ×6 attached</div></div><div class="field"><label>Result</label><select id="i-result" class="input"><option>Pass</option><option>Exception</option><option>Fail</option></select></div></div><div class="field"><label>Reason (required for Exception / Fail)</label><input id="i-reason" class="input"></div>',footer:'<button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" id="i-ok">Sign off &amp; record result</button>',onOpen:function(ov){
+    function check(){UI.$$('#i-rows input',ov).forEach(function(inp){var r=rows.filter(function(x){return x.key===inp.getAttribute('data-key');})[0]; var v=inp.value.trim(); var cell=$('[data-chk="'+r.key+'"]',ov); cell.innerHTML=!v?pill('Pending'):v===r.on?pill('Match'):pill('Mismatch','Mismatch → flag');}); var mism=UI.$$('#i-rows input',ov).some(function(inp){var r=rows.filter(function(x){return x.key===inp.getAttribute('data-key');})[0];return inp.value.trim()&&inp.value.trim()!==r.on;}); $('#i-result',ov).value=mism?'Exception':'Pass'; if(mism) $('#i-reason',ov).value='Serial mismatch found on site — possible substitution of non-enlisted or already-used equipment'; else $('#i-reason',ov).value='';}
+    $('#i-scan',ov).addEventListener('click',function(){var sub=$('#i-sub',ov).checked; UI.$$('#i-rows input',ov).forEach(function(inp){var r=rows.filter(function(x){return x.key===inp.getAttribute('data-key');})[0]; inp.value=(sub&&r.key==='inv')?r.on.replace(/\d{4}$/,'0099'):r.on;}); check();});
+    UI.$$('#i-rows input',ov).forEach(function(inp){inp.addEventListener('input',check);});
+    $('#i-ok',ov).addEventListener('click',function(){var scanned={panels:hh.panelSerials.map(function(sn,i){return ($('[data-key="p'+i+'"]',ov).value||'').trim();}),inverter:$('[data-key="inv"]',ov).value.trim(),battery:$('[data-key="bat"]',ov).value.trim()}; if(scanned.panels.some(function(x){return !x;})||!scanned.inverter||!scanned.battery){UI.toast('Scan or enter every serial found on site first','warn');return;} var res=$('#i-result',ov).value, reason=$('#i-reason',ov).value.trim(); if(res!=='Pass'&&!reason){UI.toast('Reason required','warn');return;} UI.run(function(){DRS.act.recordInspection(id,{scanned:scanned,result:res,reason:reason,gpsDistanceM:14,photos:6},UI.actor()); UI.closeModal();},'Inspection recorded — '+res);});
+  }});
+}
+/* ---------- DA panel ---------- */
+function renderDa(S){
+  var daId=S.sim.activeDaId, da=G.da(daId); if(!da){$('#body-da').innerHTML='<div class="muted">No DA selected</div>';return;}
+  var k=G.daKpis(daId), t=TAB.da, h='';
+  var myHH=S.households.filter(function(x){return x.daId===daId;});
+  if(t==='dash'){
+    h+='<div class="mini-kpis">'+miniKpi('My systems',k.systems,k.kwp+' kWp')+miniKpi('In stock',k.inStock,k.installed+' installed')+miniKpi('Collections / month',money(k.collectionsMonth),'eff. '+k.collectionEfficiency+'%')+miniKpi('Overdue',k.overdueAccounts,money(k.overdue))+miniKpi('Claims paid',k.claimsPaid,money(k.claimsPaidAmount,{}))+miniKpi('Refinance headroom',money(k.headroom,{short:true}),'of '+money(da.facility.limit,{short:true}))+'</div>';
+    h+=card('Notifications','<div id="da-notif"></div>');
+  } else if(t==='inv'){
+    var models={}; S.inventory.forEach(function(u){if(u.daId!==daId)return; var c=G.cat(u.catalogueId); var m=models[c.id]=models[c.id]||{c:c,in_stock:0,installed:0,other:0}; m[u.status==='in_stock'?'in_stock':u.status==='installed'?'installed':'other']++;});
+    h+=card('My inventory (walled to '+esc(da.name)+')',tbl(['Model','In stock','Installed','Ret./faulty'],Object.keys(models).map(function(k){return models[k];}),[function(m){return esc(m.c.brand+' '+m.c.model)+'<div class="small muted">'+m.c.category+'</div>';},function(m){return '<b class="num">'+m.in_stock+'</b>';},function(m){return m.installed;},function(m){return m.other;}],'No inventory — IDCOL must verify a PSI batch first'));
+    h+=card('Batches',tbl(['Batch','Model','Qty','Status'],S.batches.filter(function(b){return b.daId===daId;}).reverse(),[function(b){return '<span class="mono">'+b.id+'</span>';},function(b){var c=G.cat(b.catalogueId);return esc(c.brand+' '+c.model);},function(b){return b.quantity;},function(b){return pill(b.status);}],'No batches declared'));
+  } else if(t==='hh'){
+    h+=card('Households',tbl(['System','Name','Inspection','Claim','State'],myHH.slice().reverse(),[function(x){return '<span class="mono">'+x.systemId+'</span>';},function(x){return esc(x.name)+'<div class="small muted">'+esc(x.district)+' · '+x.packageKwp+' kWp</div>';},function(x){var i=S.inspections.filter(function(y){return y.systemId===x.systemId;})[0];return i?pill(i.result):'—';},function(x){var c=S.claims.filter(function(y){return y.systemId===x.systemId;})[0];return c?pill(c.status):'—';},function(x){return pill(x.inverterState);}],'No households yet — onboard one'));
+  } else if(t==='onboard'){
+    var pm=G.daModels(daId,'panel'), im=G.daModels(daId,'inverter'), bm=G.daModels(daId,'battery');
+    var opt=function(list){return list.length?list.map(function(m){return '<option value="'+m.cat.id+'">'+esc(m.cat.brand+' '+m.cat.model)+' — '+m.inStock+' in stock</option>';}).join(''):'<option value="">No stock — request a batch</option>';};
+    h+=card('Onboard household (models &amp; serials from my stock only)','<div class="grid-2"><div class="field"><label>Household name</label><input id="o-name" class="input" value="Rahima Begum"></div><div class="field"><label>NID / phone</label><div class="flex gap-2"><input id="o-nid" class="input" value="1989123400213"><input id="o-phone" class="input" value="01811-560213"></div></div><div class="field"><label>District / upazila</label><div class="flex gap-2"><select id="o-dist" class="input">'+da.districts.map(function(d){return '<option>'+d+'</option>';}).join('')+'</select><input id="o-upz" class="input" value="Dumuria"></div></div><div class="field"><label>Package</label><select id="o-kwp" class="input">'+S.settings.packages.map(function(p){return '<option value="'+p.kwp+'"'+(p.kwp===4?' selected':'')+'>'+p.kwp+' kWp · ceiling '+money(p.ceiling)+' · '+p.panels+' panels</option>';}).join('')+'</select></div><div class="field"><label>Contract price (৳)</label><input id="o-price" class="input num" value="340000"><div class="hint">Rejected above the package ceiling price.</div></div><div class="field"><label>Panel model</label><select id="o-pm" class="input">'+opt(pm)+'</select></div><div class="field"><label>Inverter model</label><select id="o-im" class="input">'+opt(im)+'</select></div><div class="field"><label>Battery model</label><select id="o-bm" class="input">'+opt(bm)+'</select></div><div class="field"><label>Serials</label><div class="small muted" id="o-serials">Next in-stock serials are picked automatically for the console; the full portal shows the serial drop-downs.</div></div><div class="field"><label>DA field inspection report</label><input id="o-inst" class="input" value="Md. Abdur Rouf (Team KHU-2)" placeholder="Installer sign-off (mandatory)"><div class="hint">Checklist ✓ · 6 photos · installer sign-off (§3.3.1)</div></div></div><button class="btn btn-primary" id="o-ok">'+ic('user-plus')+' Confirm onboarding</button>');
+  } else if(t==='coll'){
+    h+=card('Record collection (cash / bank / NPSB receipt)','<div class="grid-2"><div class="field"><label>Household</label><select id="c-sys" class="input">'+myHH.map(function(x){return '<option value="'+x.systemId+'"'+(x.systemId===S.sim.activeSystemId?' selected':'')+'>'+x.systemId+' · '+esc(x.name)+'</option>';}).join('')+'</select></div><div class="field"><label>Amount (৳)</label><input id="c-amt" class="input num" value="'+(function(){var b=G.balances(S.sim.activeSystemId);return b?(b.overdue||(b.next?b.next.amount:0)):0;})()+'"></div><div class="field"><label>Channel</label><select id="c-ch" class="input"><option>Cash</option><option>Bank</option><option>bKash</option><option>Nagad</option></select></div><div class="field"><label>Reference</label><input id="c-ref" class="input" placeholder="bank receipt / agent slip"></div></div><button class="btn btn-primary btn-sm" id="c-ok">'+ic('receipt')+' Record &amp; issue receipt</button>');
+    h+=card('Recent payments (my portfolio)',tbl(['Date','System','Amount','Channel','Status'],S.payments.filter(function(p){return p.daId===daId;}).slice(-6).reverse(),[function(p){return F.date(p.date);},function(p){return '<span class="mono small">'+p.systemId+'</span>';},function(p){return '<span class="num">'+money(p.amount)+'</span>';},function(p){return p.channel;},function(p){return pill(p.status);}],'No collections yet'));
+  } else if(t==='claims'){
+    h+=card('Refinance claims',tbl(['Claim','System','Amount','Status',''],S.claims.filter(function(c){return c.daId===daId;}).reverse(),[function(c){return '<span class="mono">'+c.id+'</span>';},function(c){return '<span class="mono">'+c.systemId+'</span>';},function(c){return '<span class="num">'+money(c.amount)+'</span>';},function(c){return pill(c.status)+(c.holdReason?'<div class="small muted">'+esc(c.holdReason)+'</div>':'');},function(c){return c.status==='Eligible'?'<button class="btn btn-secondary btn-sm" data-daclaim="'+c.id+'" data-action="draft">Prepare</button>':c.status==='Draft'?'<button class="btn btn-primary btn-sm" data-daclaim="'+c.id+'" data-action="submit">Submit</button>':'';}],'No claims yet'));
+    if(k.refinance) h+='<div class="mini-kpis">'+miniKpi('Refinance drawn',money(k.refinance.disbursed,{short:true}),'of '+money(k.refinance.sanctioned,{short:true}))+miniKpi('Headroom',money(k.refinance.headroom,{short:true}),'')+'</div>';
+  }
+  $('#body-da').innerHTML=h; if(t==='dash') UI.notifList('#da-notif','da:'+daId,6);
+  var ok=$('#o-ok'); if(ok) ok.addEventListener('click',function(){var S=DRS.state(); var p=G.pkg($('#o-kwp').value); var pm=$('#o-pm').value, im=$('#o-im').value, bm=$('#o-bm').value; UI.run(function(){ var panels=G.stockFor(daId,pm).slice(0,p.panels).map(function(u){return u.serial;}); var inv=(G.stockFor(daId,im)[0]||{}).serial, bat=(G.stockFor(daId,bm)[0]||{}).serial; if(panels.length<p.panels||!inv||!bat) throw new Error('Insufficient in-stock serials for this package — request a batch'); DRS.act.onboardHousehold(daId,{name:$('#o-name').value,nid:$('#o-nid').value,phone:$('#o-phone').value,district:$('#o-dist').value,upazila:$('#o-upz').value,address:$('#o-upz').value+', '+$('#o-dist').value,gps:{lat:22.8081,lng:89.4231},kwp:p.kwp,contractPrice:$('#o-price').value,panelSerials:panels,inverterSerial:inv,batterySerial:bat,daReport:{installer:$('#o-inst').value,photos:6}},da.name+' agent'); TAB.da='hh'; TAB.household='home'; },'Household onboarded — serials installed, loan schedule created, IDCOL inspection requested');});
+  UI.$$('#body-da [data-daclaim]').forEach(function(x){x.addEventListener('click',function(){UI.run(function(){DRS.act.claimAction(x.getAttribute('data-daclaim'),x.getAttribute('data-action'),da.name+' agent',null,'DA');},x.getAttribute('data-action')==='draft'?'Claim prepared (draft)':'Claim submitted to IDCOL');});});
+  var cok=$('#c-ok'); if(cok) cok.addEventListener('click',function(){UI.run(function(){DRS.act.recordPayment($('#c-sys').value,{amount:$('#c-amt').value,channel:$('#c-ch').value,reference:$('#c-ref').value||undefined},da.name+' collection agent');},'Payment recorded — receipt issued');});
+}
+/* ---------- Household panel ---------- */
+function renderHh(S){
+  var sid=S.sim.activeSystemId, hh=G.household(sid); if(!hh){$('#body-household').innerHTML='<div class="muted">No household</div>';return;}
+  var l=G.loan(sid), b=G.balances(sid), p=G.performance(sid), t=TAB.household, h='';
+  if(t==='home'){
+    h+='<div id="hh-banner"></div>';
+    h+='<div class="mini-kpis" style="grid-template-columns:repeat(3,1fr)">'+miniKpi('Today',p.today+' <span class="small">kWh</span>','')+miniKpi('This month',p.month+' <span class="small">kWh</span>','')+miniKpi('Total',p.cumulative+' <span class="small">kWh</span>','')+'</div>';
+    h+='<div class="mini-kpis">'+miniKpi('Next installment',b.next?money(b.next.amount):'—',b.next?('due '+F.date(b.next.dueDate)):'')+miniKpi('Overdue','<span style="color:'+(b.overdue?'var(--error)':'inherit')+'">'+money(b.overdue)+'</span>',b.overdue?b.overdueDays+' days':'—')+'</div>';
+    h+='<div class="small muted">'+esc(hh.name)+' · <span class="mono">'+sid+'</span> · '+hh.packageKwp+' kWp · '+esc((G.da(hh.daId)||{}).name||'')+'</div>';
+  } else if(t==='loan'){
+    h+='<div class="dl small"><dt>Total cost</dt><dd class="num">'+money(l.totalCost)+'</dd><dt>Upfront (20%)</dt><dd class="num">'+money(l.upfront)+'</dd><dt>Financed by DA</dt><dd class="num">'+money(l.daFinanced)+'</dd><dt>Program refinance</dt><dd class="num">'+money(l.idcolRefinanced)+'</dd><dt>Rate · tenor</dt><dd>'+l.rate+'% · '+l.tenorMonths+' months</dd><dt>Installment</dt><dd class="num"><b>'+money(l.installment)+'</b></dd><dt>Remaining</dt><dd class="num">'+money(b.remaining)+' · '+b.paidCount+'/'+l.tenorMonths+' paid</dd></div>';
+    h+='<div class="table-wrap"><table class="tbl tbl-compact"><thead><tr><th>#</th><th>Due</th><th>Amount</th><th>Paid</th><th>Paid on</th><th>Status</th></tr></thead><tbody id="hh-sched"></tbody></table></div>';
+  } else if(t==='pay'){
+    var due=b.overdue||(b.next?b.next.amount:0);
+    h+='<div class="field"><label>Amount to pay</label><input id="hp-amt" class="input num" value="'+due+'"><div class="hint">Default = overdue + current due. Partial and advance payments are accepted.</div></div>';
+    h+='<div class="grid-2">'+['bKash','Nagad','Card','Bank'].map(function(c){return '<button class="btn btn-secondary" data-pay="'+c+'" style="height:44px">'+ic(c==='Card'?'credit-card':c==='Bank'?'landmark':'smartphone')+' '+(c==='Bank'?'Bank receipt (NPSB)':c)+'</button>';}).join('')+'</div>';
+    if(hh.inverterState==='halted'&&hh.haltReason==='overdue') h+='<div class="callout small">Your system is halted. After this payment clears the overdue, a RESUME command is sent to your inverter automatically.</div>';
+  } else if(t==='receipts'){
+    h+='<div class="table-wrap"><table class="tbl tbl-compact"><thead><tr><th>Date</th><th>Receipt</th><th>Amount</th><th>Channel</th><th>Ref</th><th>Status</th><th></th></tr></thead><tbody id="hh-pays"></tbody></table></div>';
+  } else if(t==='notif'){
+    h+='<div id="hh-notif"></div>';
+  }
+  $('#body-household').innerHTML=h;
+  if(t==='home') UI.statusBanner('#hh-banner',sid);
+  if(t==='loan') UI.scheduleTable('#hh-sched',sid);
+  if(t==='receipts') UI.paymentsTable('#hh-pays',S.payments.filter(function(x){return x.systemId===sid;}).slice().reverse());
+  if(t==='notif') UI.notifList('#hh-notif','household:'+sid,10);
+  UI.$$('#body-household [data-pay]').forEach(function(x){x.addEventListener('click',function(){var ch=x.getAttribute('data-pay'); var amt=+$('#hp-amt').value; if(ch==='Bank'){UI.modal({title:'Enter bank receipt (NPSB transfer)',icon:'landmark',body:'<div class="grid-2"><div class="field"><label>Bank</label><select class="input" id="bk-bank"><option>Sonali Bank</option><option>BRAC Bank</option><option>Dutch-Bangla Bank</option></select></div><div class="field"><label>Transfer reference</label><input id="bk-ref" class="input mono" value="NPSB'+Math.floor(1e7+Math.random()*9e7)+'"></div><div class="field"><label>Amount (৳)</label><input id="bk-amt" class="input num" value="'+amt+'"></div><div class="field"><label>Date</label><input class="input" value="'+F.date(DRS.state().sim.today)+'" disabled></div></div><div class="small muted">A machine-generated receipt is issued in real time (§3.6).</div>',footer:'<button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" id="bk-ok">Submit receipt</button>',onOpen:function(ov){$('#bk-ok',ov).addEventListener('click',function(){UI.run(function(){var p=DRS.act.recordPayment(sid,{amount:$('#bk-amt',ov).value,channel:'Bank',reference:$('#bk-ref',ov).value},hh.name); UI.closeModal(); TAB.household='home'; UI.showReceipt(p.id);},'Receipt issued');});}});return;} UI.modal({title:ch+' checkout',icon:'smartphone',body:'<div class="dl"><dt>Merchant</dt><dd>IDCOL DRS · '+esc((G.da(hh.daId)||{}).name||'')+' Program account</dd><dt>Amount</dt><dd class="num"><b>'+money(amt)+'</b></dd><dt>Account</dt><dd class="mono">'+esc(hh.phone)+'</dd></div><div class="field"><label>'+(ch==='Card'?'Card number':ch+' PIN / OTP')+'</label><input class="input mono" value="'+(ch==='Card'?'4111 •••• •••• 1234':'••••• / 482913')+'" disabled></div><div class="small muted">Simulated payment service provider. In production the PSP posts the payment to the CRM in real time (§3.6).</div>',footer:'<button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" id="pay-ok">Confirm payment</button>',onOpen:function(ov){$('#pay-ok',ov).addEventListener('click',function(){var btn=this;btn.disabled=true;btn.textContent='Processing…';setTimeout(function(){UI.run(function(){var p=DRS.act.recordPayment(sid,{amount:amt,channel:ch},'Gateway (auto-post)'); UI.closeModal(); TAB.household='home'; UI.showReceipt(p.id);},'Payment successful — receipt issued');},700);});}});});});
+}
+
+function renderChain(S){
+  var n=S.sim.step, el=$('#chain'); if(!n){ el.innerHTML=''; return; }
+  var R={idcol:['IDCOL Staff','landmark','mis'],da:['DA Agent','building-2','rmp'],hh:['Household','home','crm'],sys:['System / clock','clock','sys']};
+  el.innerHTML='<div class="eyebrow">How this step connects the roles</div><div class="chain">'+STEP[n].chain.map(function(c){var r=R[c[0]]; return '<div class="chain-node"><span class="lane-ic bg-'+r[2]+'">'+ic(r[1])+'</span><div><div class="cn-role">'+r[0]+'</div><div class="cn-text">'+esc(c[1])+'</div></div></div>';}).join('<span class="chain-arrow">'+ic('arrow-right')+'</span>')+'</div>';
+}
+function renderPanelImpact(S){
+  var n=S.sim.step, info=n?STEP[n]:null;
+  [['idcol','idcol'],['da','da'],['household','hh']].forEach(function(r){ var el=$('#impact-'+r[0]); if(!el) return; el.innerHTML=(info?'<div class="impact-text">'+esc(info.impact[r[1]])+'</div><div class="impact-status">'+liveStatus(r[1],n,S)+'</div>':'<div class="impact-text muted">Nothing has happened yet — pick a journey or press Next</div>')+'<span class="updated-tag">Updated</span>'; });
+}
+function hlIds(n,S){ if(!n) return []; var ids=entities(n,S).map(function(e){return e.id;}).filter(function(x){return x!=='Loan';}); var f=focus(n), da=G.da(f.da), hh=G.household(f.hh); if(da) ids.push(da.name); if(hh) ids.push(hh.name); if(n===2) S.batches.filter(function(b){return b.daId===DA;}).forEach(function(b){ids.push(b.id);}); return ids; }
+function markRows(S){
+  var ids=hlIds(S.sim.step,S);
+  ['idcol','da','household'].forEach(function(r){ UI.$$('#body-'+r+' tr').forEach(function(tr){ var t=tr.textContent; tr.classList.toggle('hl', ids.some(function(id){return id&&t.indexOf(id)>=0;})); }); });
+}
+function applyStepTabs(n){ var t=TAB_FOR_STEP[n]; if(t){ TAB.idcol=t.idcol; TAB.da=t.da; TAB.household=t.household; } }
+function renderMore(S){
+  var n=S.sim.step, st=n?DRS.scenario.steps[n-1]:null;
+  $('#more-body').innerHTML=(st?'<div class="grid-2"><div><div class="eyebrow">Full narrative</div><p class="small mt-2">'+esc(st.desc)+'</p><div class="small muted mt-2">Requirement reference: '+esc(st.refs)+'</div><div class="small muted mt-1">Roles touched in this step: '+(S.sim.lastChanged||[]).join(', ')+'</div></div>':'<div class="grid-2"><div><div class="small muted">No step has run yet.</div></div>')+
+    '<div><div class="eyebrow">Latest changes recorded</div><div class="table-wrap mt-2"><table class="tbl tbl-compact"><thead><tr><th>Time</th><th>Actor</th><th>Action</th><th>Entity</th></tr></thead><tbody>'+S.audit.slice(-8).reverse().map(function(a){return '<tr><td class="mono small">'+F.dt(a.ts)+'</td><td class="small">'+esc(a.actor)+'</td><td class="mono small">'+esc(a.action)+'</td><td class="mono small">'+esc(a.entityId)+'</td></tr>';}).join('')+'</tbody></table></div><a class="link small" href="../idcol/audit-log.page.html">Full audit trail →</a></div></div>';
+}
+function renderAll(S){
+  renderJsel(S); renderStory(S); renderChain(S); renderPanelImpact(S);
+  var sel=$('#sim-da'); sel.innerHTML=S.das.map(function(d){return '<option value="'+d.id+'"'+(d.id===S.sim.activeDaId?' selected':'')+'>'+esc(d.name)+'</option>';}).join('');
+  var sh=$('#sim-hh'); sh.innerHTML=S.households.map(function(x){return '<option value="'+x.systemId+'"'+(x.systemId===S.sim.activeSystemId?' selected':'')+'>'+esc(x.name)+' · '+x.systemId+'</option>';}).join('');
+  UI.$$('.panel-tabs').forEach(function(bar){var role=bar.getAttribute('data-panel');UI.$$('.panel-tab',bar).forEach(function(t){t.classList.toggle('active',t.getAttribute('data-tab')===TAB[role]);});});
+  renderIdcol(S); renderDa(S); renderHh(S); markRows(S); renderMore(S);
+  $('#sim-date').textContent=F.date(S.sim.today); $('#sim-prev').disabled=S.sim.step===0; $('#sim-next').disabled=S.sim.step>=DRS.scenario.steps.length; UI.icons(); bind();
+}
+function highlight(S){ var ch=S.sim.lastChanged||[]; ['idcol','da','household'].forEach(function(r){var el=$('#panel-'+r); if(el) el.classList.toggle('updated',ch.indexOf(r)>=0);}); setTimeout(function(){UI.$$('.panel').forEach(function(p){p.classList.remove('updated');});},3500); }
+function setFocus(){ var S=DRS.state(), f=focus(S.sim.step||1); if(G.da(f.da)&&S.sim.activeDaId!==f.da) DRS.act.setActiveDa(f.da); if(G.household(f.hh)&&S.sim.activeSystemId!==f.hh) DRS.act.setActiveSystem(f.hh); }
+function selectJourney(k){ var j=JOURNEYS[k-1]; if(!j) return; var S=DRS.state(); if(j.steps.indexOf(S.sim.step)<0){ applyStepTabs(j.steps[0]); DRS.scenario.goto(j.steps[0]); setFocus(); } else { applyStepTabs(S.sim.step); renderAll(DRS.state()); } highlight(DRS.state()); }
+function bind(){
+  UI.$$('[data-j]').forEach(function(b){b.addEventListener('click',function(){selectJourney(+b.getAttribute('data-j'));});});
+  UI.$$('[data-goto]').forEach(function(b){b.addEventListener('click',function(){var n=+b.getAttribute('data-goto'); applyStepTabs(n); DRS.scenario.goto(n); setFocus(); highlight(DRS.state());});});
+  UI.$$('[data-go]').forEach(function(a){a.addEventListener('click',function(){setFocus();});});
+  var sn=$('#story-next'); if(sn) sn.addEventListener('click',function(){$('#sim-next').click();});
+  var sr=$('#story-reset'); if(sr) sr.addEventListener('click',function(){$('#sim-reset').click();});
+}
+UI.page({role:'app',page:'simulation',render:function(S){renderAll(S);},init:function(S){
+  $('#sim-next').addEventListener('click',function(){var n=DRS.state().sim.step+1; applyStepTabs(n); var st=DRS.scenario.next(); if(st){ setFocus(); highlight(DRS.state()); UI.toast('Step '+st.n+' done — '+STEP[st.n].t,'success'); } });
+  $('#sim-prev').addEventListener('click',function(){applyStepTabs(DRS.state().sim.step-1); DRS.scenario.prev(); highlight(DRS.state());});
+  $('#sim-reset').addEventListener('click',function(){UI.confirm({title:'Reset the demo',body:'Returns every portal to the starting data and step 0.',ok:'Reset',danger:true,icon:'rotate-ccw'}).then(function(ok){if(ok){TAB={idcol:'dash',da:'dash',household:'home'};DRS.reset();UI.toast('Demo reset','success');}});});
+  $('#sim-auto').addEventListener('click',function(){var b=this; if(autoTimer){clearInterval(autoTimer);autoTimer=null;b.innerHTML=ic('play')+' Auto-play';UI.icons();return;} b.innerHTML=ic('pause')+' Pause'; UI.icons(); autoTimer=setInterval(function(){ if(DRS.scenario.step()>=DRS.scenario.steps.length){clearInterval(autoTimer);autoTimer=null;b.innerHTML=ic('play')+' Auto-play';UI.icons();return;} $('#sim-next').click(); },4500);});
+  $('#sim-d1').addEventListener('click',function(){DRS.act.advanceClock(1); highlight(DRS.state()); UI.toast('Clock advanced to '+F.date(DRS.state().sim.today));});
+  $('#sim-d10').addEventListener('click',function(){DRS.act.advanceClock(10); highlight(DRS.state()); UI.toast('Clock advanced to '+F.date(DRS.state().sim.today));});
+  UI.$$('.panel-tabs').forEach(function(bar){var role=bar.getAttribute('data-panel');bar.addEventListener('click',function(e){var t=e.target.closest('.panel-tab');if(!t)return;TAB[role]=t.getAttribute('data-tab');renderAll(DRS.state());});});
+  $('#sim-da').addEventListener('change',function(e){DRS.act.setActiveDa(e.target.value);});
+  $('#sim-hh').addEventListener('change',function(e){DRS.act.setActiveSystem(e.target.value);});
+  window.addEventListener('drs:change',function(e){ if(e.detail&&e.detail.remote) highlight(DRS.state()); });
+  var q=UI.qs('journey'); if(q) selectJourney(+q);
+}});
+
+</script>
+</body>
+</html>

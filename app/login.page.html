@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — IDCOL DRS</title>
+<meta name="description" content="IDCOL Domestic Rooftop Solar platform — interactive demo prototype — Sign in">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Bengali:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../drs-theme.css?v=8">
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.454.0/dist/umd/lucide.min.js"></script>
+<script src="../drs-sim.js?v=7"></script>
+<script src="../drs-ui.js?v=7"></script>
+
+</head>
+<body data-role="app" data-page="login">
+<header class="topbar flex items-center gap-3" style="padding:0 20px">
+  <button id="tb-menu" class="btn btn-ghost btn-sm" aria-label="Menu"><i data-lucide="menu" class="lucide"></i></button>
+  <a href="../app/home.page.html" class="brand" title="IDCOL DRS — Demo home"><img src="../idcol-logo.png" alt="IDCOL — Together for Tomorrow"><span class="prog"><b>DRS Platform</b>Domestic Rooftop Solar Program</span></a>
+  <div style="position:relative">
+    <button id="tb-switcher" class="btn btn-secondary btn-sm" title="Switch profile"><i data-lucide="users" class="lucide"></i> <span id="tb-role">Profile</span> <span id="tb-entity" class="muted" style="font-weight:400;max-width:260px;overflow:hidden;text-overflow:ellipsis"></span> <i data-lucide="chevron-down" class="lucide"></i></button>
+    <div id="tb-switcher-dd" class="dropdown" style="left:0;right:auto;width:440px">
+      <div class="card-head"><h3>Switch profile</h3><span class="tag" style="border-style:dashed">demo / simulation</span><span class="small muted">same shared state</span></div>
+      <div style="padding:12px 14px;display:grid;gap:12px">
+        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">IDCOL Staff</span><span class="small muted flex-1">Program administrator · all DAs</span><a class="btn btn-primary btn-sm" href="../idcol/dashboard.page.html">Open <i data-lucide="arrow-right" class="lucide"></i></a></div>
+        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">DA Agent</span><select id="sw-da" class="input flex-1" style="height:30px;font-size:12px"></select><button id="sw-go-da" class="btn btn-primary btn-sm">Open <i data-lucide="arrow-right" class="lucide"></i></button></div>
+        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">Household</span><select id="sw-hh" class="input flex-1" style="height:30px;font-size:12px"></select><button id="sw-go-hh" class="btn btn-primary btn-sm">Open <i data-lucide="arrow-right" class="lucide"></i></button></div>
+        <hr class="hr">
+        <div class="flex items-center gap-2 wrap"><a class="btn btn-secondary btn-sm" href="../app/simulation.page.html"><i data-lucide="play" class="lucide"></i> Simulation Console</a><a class="btn btn-secondary btn-sm" href="../app/home.page.html"><i data-lucide="home" class="lucide"></i> Demo home</a><button id="tb-reset" class="btn btn-danger btn-sm ml-auto"><i data-lucide="rotate-ccw" class="lucide"></i> Reset data</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="ml-auto flex items-center gap-2">
+    <span class="tag" title="Simulated date"><i data-lucide="calendar" class="lucide w-4"></i> <b id="tb-date">—</b> <span id="tb-step" class="muted"></span></span>
+    <a class="btn btn-secondary btn-sm" href="../app/simulation.page.html"><i data-lucide="play" class="lucide"></i> Simulation</a>
+    <button id="tb-guide" class="btn btn-ghost btn-sm" title="Demo guide"><i data-lucide="circle-help" class="lucide"></i> Guide</button>
+    <div style="position:relative"><button id="tb-bell" class="btn btn-ghost btn-sm" aria-label="Notifications" style="position:relative"><i data-lucide="bell" class="lucide"></i><span id="tb-bell-dot" style="display:none"></span><span id="tb-bell-count"></span></button><div id="tb-notif-dd" class="dropdown"><div class="card-head"><h3>Notifications</h3><span class="small muted">SMS + in-app</span></div><div id="tb-notif-list"></div></div></div>
+    <span id="user-select-wrap" class="flex items-center gap-1"><span class="tag" style="border-style:dashed" title="Demo / simulation tool: switches the acting IDCOL user to demonstrate maker-checker-approver separation">Simulation / acting user</span><select id="user-select" class="input" style="width:auto;height:30px;font-size:12px" title="Simulation / acting user — demo tool for maker-checker"></select></span>
+  </div>
+</header>
+<div class="brand-strip"></div>
+<div class="flex">
+
+<main class="content">
+
+<div class="grid-2" style="min-height:calc(100vh - 140px);gap:0;border:1px solid var(--border);border-radius:4px;overflow:hidden">
+  <section style="background:var(--primary);color:#fff;padding:48px 44px;display:flex;flex-direction:column;gap:28px">
+    <div><div style="background:#fff;border-radius:8px;padding:10px 14px;display:inline-block"><img src="../idcol-logo.png" alt="IDCOL" style="height:52px;display:block"></div><div class="eyebrow" style="color:#BFD3EA;margin-top:18px">Domestic Rooftop Solar Program</div><h1 style="color:#fff;margin-top:8px">One platform for IDCOL, Demand Aggregators and households</h1><p style="opacity:.85;margin-top:12px;max-width:520px">Every system installed, every installment collected and every unit generated — recorded once, visible to everyone who is entitled to see it.</p></div>
+    <div style="display:grid;gap:12px;max-width:520px">
+      <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:4px;padding:14px 16px"><div style="font-weight:500">IDCOL Staff</div><div class="small" style="opacity:.8">Program-wide MIS · Inspection · RMP · CRM · audit</div></div>
+      <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:4px;padding:14px 16px;margin-left:24px"><div style="font-weight:500">Demand Aggregator</div><div class="small" style="opacity:.8">Walled portfolio · inventory · onboarding · collections · claims</div></div>
+      <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:4px;padding:14px 16px;margin-left:48px"><div style="font-weight:500">Household</div><div class="small" style="opacity:.8">My system · my loan · pay · receipts · complaint</div></div>
+    </div>
+    <div class="small" style="opacity:.7;margin-top:auto">Bangla + English interface · role-based access · full audit trail · hosted in Bangladesh (§4, §5.1)</div>
+  </section>
+  <section style="padding:48px 44px;display:flex;flex-direction:column;justify-content:center;gap:18px;max-width:560px">
+    <div><h2>Sign in</h2><div class="muted small">Demo credentials are pre-filled for each profile.</div></div>
+    <div class="tabs" id="login-tabs"><span class="tab active" data-tab="idcol">IDCOL Staff</span><span class="tab" data-tab="da">DA Agent</span><span class="tab" data-tab="household">Household</span></div>
+    <div class="tab-panel active" data-panel="idcol"><div class="field"><label>Acting user</label><select id="login-user" class="input"></select></div></div>
+    <div class="tab-panel" data-panel="da"><div class="field"><label>Demand Aggregator</label><select id="login-da" class="input"></select><div class="hint">DA agents are authorised by their DA within the rights IDCOL granted (§4).</div></div></div>
+    <div class="tab-panel" data-panel="household"><div class="field"><label>Household / system</label><select id="login-hh" class="input"></select><div class="hint">Households see only their own system.</div></div></div>
+    <div class="field"><label>Email</label><input id="login-email" class="input" value="a.karim@idcol.org"></div>
+    <div class="field"><label>Password</label><div class="flex gap-2"><input id="login-pw" class="input" type="password" value="demo-2026"><button class="btn btn-secondary" id="login-eye" type="button" aria-label="Show password"><i data-lucide="eye" class="lucide"></i></button></div></div>
+    <label class="check"><input type="checkbox" checked> Remember me on this device</label>
+    <button class="btn btn-primary btn-lg" id="login-btn"><i data-lucide="log-in" class="lucide"></i> Sign in</button>
+    <div class="small muted">Forgot password — password reset by SMS OTP is part of the full platform (§5.1 secure log-in); not simulated here.</div>
+  </section>
+</div>
+
+</main>
+</div>
+<footer class="small muted flex wrap gap-3 items-center" style="padding:16px 24px;border-top:1px solid var(--border)"><span>IDCOL DRS Platform — interactive demo prototype</span><span>·</span><span>All data is simulated in your browser; nothing is sent anywhere.</span><span class="ml-auto">Riseup Labs · September 2026</span></footer>
+<script>
+
+var LOGIN_ROLE='idcol';
+UI.page({ role:'app', page:'login', render:function(S){
+  var u=document.getElementById('login-user'); if(!u.options.length) u.innerHTML=S.users.map(function(x){return '<option value="'+UI.esc(x.email)+'" data-name="'+UI.esc(x.name)+'">'+UI.esc(x.name)+' — '+UI.esc(x.role)+'</option>';}).join('');
+  document.getElementById('login-da').innerHTML=S.das.map(function(d){return '<option value="'+d.id+'"'+(d.id===S.sim.activeDaId?' selected':'')+'>'+UI.esc(d.name)+' ('+d.legalForm+')</option>';}).join('');
+  document.getElementById('login-hh').innerHTML=S.households.map(function(h){return '<option value="'+h.systemId+'"'+(h.systemId===S.sim.activeSystemId?' selected':'')+'>'+UI.esc(h.name)+' · '+h.systemId+'</option>';}).join('');
+}, init:function(S){
+  UI.tabs('#login-tabs');
+  UI.$$('#login-tabs .tab').forEach(function(t){t.addEventListener('click',function(){LOGIN_ROLE=t.getAttribute('data-tab'); var em=document.getElementById('login-email'); if(LOGIN_ROLE==='idcol') em.value=document.getElementById('login-user').value; else if(LOGIN_ROLE==='da') em.value='agent@'+DRS.get.da(document.getElementById('login-da').value).name.toLowerCase().replace(/[^a-z]+/g,'-')+'.org'; else em.value=DRS.get.household(document.getElementById('login-hh').value).phone.replace('-','')+'@sms.drs.gov.bd';});});
+  document.getElementById('login-user').addEventListener('change',function(e){document.getElementById('login-email').value=e.target.value;});
+  document.getElementById('login-eye').addEventListener('click',function(){var p=document.getElementById('login-pw');p.type=p.type==='password'?'text':'password';});
+  document.getElementById('login-btn').addEventListener('click',function(){var b=this;b.disabled=true;b.innerHTML=UI.ic('loader-2')+' Signing in…';setTimeout(function(){ if(LOGIN_ROLE==='idcol'){ var sel=document.getElementById('login-user'); var us=document.getElementById('user-select'); if(us) us.value=sel.options[sel.selectedIndex].getAttribute('data-name'); location.href='../idcol/dashboard.page.html'; } else if(LOGIN_ROLE==='da'){ DRS.act.setActiveDa(document.getElementById('login-da').value); location.href='../da/dashboard.page.html'; } else { DRS.act.setActiveSystem(document.getElementById('login-hh').value); location.href='../household/home.page.html'; } },600);});
+}});
+
+</script>
+</body>
+</html>

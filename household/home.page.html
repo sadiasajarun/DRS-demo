@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Household Home — IDCOL DRS</title>
+<meta name="description" content="IDCOL Domestic Rooftop Solar platform — interactive demo prototype — Household Home">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Bengali:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../drs-theme.css?v=8">
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.454.0/dist/umd/lucide.min.js"></script>
+<script src="../drs-sim.js?v=7"></script>
+<script src="../drs-ui.js?v=7"></script>
+
+</head>
+<body data-role="household" data-page="home">
+<header class="topbar flex items-center gap-3" style="padding:0 20px">
+  <button id="tb-menu" class="btn btn-ghost btn-sm" aria-label="Menu"><i data-lucide="menu" class="lucide"></i></button>
+  <a href="../app/home.page.html" class="brand" title="IDCOL DRS — Demo home"><img src="../idcol-logo.png" alt="IDCOL — Together for Tomorrow"><span class="prog"><b>DRS Platform</b>Domestic Rooftop Solar Program</span></a>
+  <div style="position:relative">
+    <button id="tb-switcher" class="btn btn-secondary btn-sm" title="Switch profile"><i data-lucide="users" class="lucide"></i> <span id="tb-role">Profile</span> <span id="tb-entity" class="muted" style="font-weight:400;max-width:260px;overflow:hidden;text-overflow:ellipsis"></span> <i data-lucide="chevron-down" class="lucide"></i></button>
+    <div id="tb-switcher-dd" class="dropdown" style="left:0;right:auto;width:440px">
+      <div class="card-head"><h3>Switch profile</h3><span class="tag" style="border-style:dashed">demo / simulation</span><span class="small muted">same shared state</span></div>
+      <div style="padding:12px 14px;display:grid;gap:12px">
+        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">IDCOL Staff</span><span class="small muted flex-1">Program administrator · all DAs</span><a class="btn btn-primary btn-sm" href="../idcol/dashboard.page.html">Open <i data-lucide="arrow-right" class="lucide"></i></a></div>
+        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">DA Agent</span><select id="sw-da" class="input flex-1" style="height:30px;font-size:12px"></select><button id="sw-go-da" class="btn btn-primary btn-sm">Open <i data-lucide="arrow-right" class="lucide"></i></button></div>
+        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">Household</span><select id="sw-hh" class="input flex-1" style="height:30px;font-size:12px"></select><button id="sw-go-hh" class="btn btn-primary btn-sm">Open <i data-lucide="arrow-right" class="lucide"></i></button></div>
+        <hr class="hr">
+        <div class="flex items-center gap-2 wrap"><a class="btn btn-secondary btn-sm" href="../app/simulation.page.html"><i data-lucide="play" class="lucide"></i> Simulation Console</a><a class="btn btn-secondary btn-sm" href="../app/home.page.html"><i data-lucide="home" class="lucide"></i> Demo home</a><button id="tb-reset" class="btn btn-danger btn-sm ml-auto"><i data-lucide="rotate-ccw" class="lucide"></i> Reset data</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="ml-auto flex items-center gap-2">
+    <span class="tag" title="Simulated date"><i data-lucide="calendar" class="lucide w-4"></i> <b id="tb-date">—</b> <span id="tb-step" class="muted"></span></span>
+    <a class="btn btn-secondary btn-sm" href="../app/simulation.page.html"><i data-lucide="play" class="lucide"></i> Simulation</a>
+    <button id="tb-guide" class="btn btn-ghost btn-sm" title="Demo guide"><i data-lucide="circle-help" class="lucide"></i> Guide</button>
+    <div style="position:relative"><button id="tb-bell" class="btn btn-ghost btn-sm" aria-label="Notifications" style="position:relative"><i data-lucide="bell" class="lucide"></i><span id="tb-bell-dot" style="display:none"></span><span id="tb-bell-count"></span></button><div id="tb-notif-dd" class="dropdown"><div class="card-head"><h3>Notifications</h3><span class="small muted">SMS + in-app</span></div><div id="tb-notif-list"></div></div></div>
+    <span id="user-select-wrap" class="flex items-center gap-1"><span class="tag" style="border-style:dashed" title="Demo / simulation tool: switches the acting IDCOL user to demonstrate maker-checker-approver separation">Simulation / acting user</span><select id="user-select" class="input" style="width:auto;height:30px;font-size:12px" title="Simulation / acting user — demo tool for maker-checker"></select></span>
+  </div>
+</header>
+<div class="brand-strip"></div>
+<div class="flex">
+<aside class="sidebar" aria-label="Navigation"><div class="sb-role"><span class="avatar" id="sb-avatar"></span><div style="min-width:0"><div class="who" id="sb-role"></div><div class="ent" id="sb-entity"></div></div></div><nav style="padding:8px 0 24px"><div class="sidebar-group"><span class="dot"></span>Household portal</div><a class="nav-item" data-page="home" href="../household/home.page.html"><i data-lucide="home" class="lucide"></i><span>Home</span></a><a class="nav-item" data-page="system" href="../household/system.page.html"><i data-lucide="sun" class="lucide"></i><span>My System</span></a><a class="nav-item" data-page="loan" href="../household/loan.page.html"><i data-lucide="wallet" class="lucide"></i><span>My Loan</span></a><a class="nav-item" data-page="pay" href="../household/pay.page.html"><i data-lucide="credit-card" class="lucide"></i><span>Pay Installment</span></a><a class="nav-item" data-page="receipts" href="../household/receipts.page.html"><i data-lucide="receipt" class="lucide"></i><span>Receipts</span></a><a class="nav-item" data-page="complaint" href="../household/complaint.page.html"><i data-lucide="message-square-warning" class="lucide"></i><span>Complaint / Dispute</span></a></nav></aside>
+<main class="content">
+<div class="page-head"><div><h1 id="h-title"></h1><div class="sub" id="h-sub"></div></div><div class="actions"><a class="btn btn-primary btn-lg" href="../household/pay.page.html"><i data-lucide="credit-card" class="lucide"></i> Pay installment</a></div></div>
+<div id="h-banner" class="banner banner-run"></div>
+<div id="h-alerts" class="section-gap mt-4" style="gap:8px"></div>
+<div class="kpis mt-4" id="h-kpis"></div>
+<div class="grid-2 mt-4">
+<div class="card" style=""><div class="card-head"><i data-lucide="calendar-clock" class="lucide"></i><h3>Next installment</h3></div><div class="card-body"><div id="h-next"></div></div></div>
+<div class="card" style=""><div class="card-head"><i data-lucide="alert-triangle" class="lucide"></i><h3>Overdue</h3></div><div class="card-body"><div id="h-over"></div></div></div>
+</div>
+<div class="grid-2 mt-4">
+<div class="card" style=""><div class="card-head"><i data-lucide="activity" class="lucide"></i><h3>Generation — last 14 days</h3></div><div class="card-body"><div id="h-chart"></div></div></div>
+<div class="card" style=""><div class="card-head"><i data-lucide="bell" class="lucide"></i><h3>Notifications</h3><span class="small muted">SMS + app</span></div><div class="p-0"><div id="h-notif"></div></div></div>
+</div>
+</main>
+</div>
+<footer class="small muted flex wrap gap-3 items-center" style="padding:16px 24px;border-top:1px solid var(--border)"><span>IDCOL DRS Platform — interactive demo prototype</span><span>·</span><span>All data is simulated in your browser; nothing is sent anywhere.</span><span class="ml-auto">Riseup Labs · September 2026</span></footer>
+<script>
+
+UI.page({role:'household',page:'home',render:function(S){ var hh=DRS.get.household(S.sim.activeSystemId)||S.households[0]; if(!hh) return; var sid=hh.systemId, l=DRS.get.loan(sid), b=DRS.get.balances(sid), p=DRS.get.performance(sid), F=DRS.fmt, $=UI.$, esc=UI.esc, da=DRS.get.da(hh.daId);
+  $('#h-title').innerHTML='Welcome, '+esc(hh.name)+'';
+  $('#h-sub').innerHTML='<span class="mono">'+sid+'</span> · '+hh.packageKwp+' kWp · '+esc(hh.upazila)+', '+esc(hh.district)+' · '+esc(da.name);
+  UI.statusBanner('#h-banner',sid);
+  UI.kpis('#h-kpis',[['Today',p.today+' <span class="small">kWh</span>','generated','sun'],['This month',p.month+' <span class="small">kWh</span>',F.date(S.sim.today).slice(3),'calendar'],['Total',p.cumulative+' <span class="small">kWh</span>','since '+F.date(hh.installationDate),'zap'],['Exported to grid',p.exportTotal+' <span class="small">kWh</span>','net metering · '+hh.netMetering,'plug-zap'],['Estimated savings',F.money(Math.round(p.month*8.5)),'this month','piggy-bank']]);
+  $('#h-next').innerHTML=b.next?'<div class="kpi" style="border:0;padding:0"><div class="value">'+F.money(b.next.amount)+'</div><div class="sub">Installment '+b.next.n+' of '+l.tenorMonths+' · due '+F.date(b.next.dueDate)+''+(b.next.dueDate>=S.sim.today?' · '+F.diffDays(b.next.dueDate,S.sim.today)+' days left':'')+'</div></div><div class="mt-4 flex gap-2"><a class="btn btn-secondary" href="../household/loan.page.html">View schedule</a></div>':'<div class="muted">Loan fully repaid</div>';
+  $('#h-over').innerHTML=b.overdue?'<div class="kpi" style="border:0;padding:0"><div class="value" style="color:var(--error)">'+F.money(b.overdue)+'</div><div class="sub">'+b.overdueCount+' installment(s) · '+b.overdueDays+' days overdue</div></div><div class="mt-4 flex gap-2"><a class="btn btn-primary" href="../household/pay.page.html">Pay now</a><a class="btn btn-secondary" href="../household/pay.page.html?bank=1">Enter bank receipt</a></div>':'<div class="kpi" style="border:0;padding:0"><div class="value" style="color:var(--success)">৳0</div><div class="sub">No overdue — thank you</div></div>';
+  var alerts=[]; var pays=S.payments.filter(function(x){return x.systemId===sid;});
+  if(b.overdue>0) alerts.push({k:'banner-halt',i:'alert-triangle',en:'Overdue payment of '+F.money(b.overdue)+' ('+b.overdueDays+' days)',href:'../household/pay.page.html',cen:'Pay now'});
+  var pend=pays.filter(function(x){return x.status==='Pending verification';}); if(pend.length) alerts.push({k:'banner-warn',i:'clock',en:pend.length+' bank transfer(s) pending verification — '+F.money(pend.reduce(function(a,x){return a+x.amount;},0)),href:'../household/receipts.page.html',cen:'View status'});
+  var failed=pays.filter(function(x){return x.status==='Failed'&&F.diffDays(S.sim.today,x.date)<=30;}); if(failed.length) alerts.push({k:'banner-warn',i:'x-circle',en:'A payment attempt failed on '+F.date(failed[failed.length-1].date)+' — no amount was debited',href:'../household/receipts.page.html',cen:'See details'});
+  if(hh.inverterState==='offline') alerts.push({k:'banner-off',i:'wifi-off',en:'System offline since '+F.date(hh.offlineSince)+' — no data received',href:'../household/system.page.html',cen:'Check system'});
+  else if(p.flags.indexOf('recurring_fault')>=0||p.flags.indexOf('under_performing')>=0) alerts.push({k:'banner-warn',i:'alert-octagon',en:'System fault or low generation detected — '+p.flags.map(UI.flagLabel).join(', '),href:'../household/system.page.html',cen:'View system'});
+  var open=S.complaints.filter(function(t){return t.systemId===sid&&t.status!=='Resolved';}); if(open.length) alerts.push({k:'banner-info',i:'message-square-warning',en:open.length+' open complaint / dispute — '+open[0].id+' ('+open[0].category+', '+open[0].status+')',href:'../household/complaint.page.html',cen:'Track ticket'});
+  $('#h-alerts').innerHTML=alerts.map(function(a){return '<div class="banner '+a.k+'" style="padding:10px 14px"><span class="icon" style="width:32px;height:32px">'+UI.ic(a.i)+'</span><div class="flex-1">'+esc(a.en)+'</div><a class="btn btn-secondary btn-sm" href="'+a.href+'">'+a.cen+' '+UI.ic('arrow-right')+'</a></div>';}).join('');
+  UI.telemetryChart('#h-chart',sid,14); UI.notifList('#h-notif','household:'+sid,6);
+}});
+</script>
+</body>
+</html>

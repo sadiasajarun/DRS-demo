@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Households — IDCOL DRS</title>
+<meta name="description" content="IDCOL Domestic Rooftop Solar platform — interactive demo prototype — My Households">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Bengali:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../drs-theme.css?v=8">
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.454.0/dist/umd/lucide.min.js"></script>
+<script src="../drs-sim.js?v=7"></script>
+<script src="../drs-ui.js?v=7"></script>
+
+</head>
+<body data-role="da" data-page="households">
+<header class="topbar flex items-center gap-3" style="padding:0 20px">
+  <button id="tb-menu" class="btn btn-ghost btn-sm" aria-label="Menu"><i data-lucide="menu" class="lucide"></i></button>
+  <a href="../app/home.page.html" class="brand" title="IDCOL DRS — Demo home"><img src="../idcol-logo.png" alt="IDCOL — Together for Tomorrow"><span class="prog"><b>DRS Platform</b>Domestic Rooftop Solar Program</span></a>
+  <div style="position:relative">
+    <button id="tb-switcher" class="btn btn-secondary btn-sm" title="Switch profile"><i data-lucide="users" class="lucide"></i> <span id="tb-role">Profile</span> <span id="tb-entity" class="muted" style="font-weight:400;max-width:260px;overflow:hidden;text-overflow:ellipsis"></span> <i data-lucide="chevron-down" class="lucide"></i></button>
+    <div id="tb-switcher-dd" class="dropdown" style="left:0;right:auto;width:440px">
+      <div class="card-head"><h3>Switch profile</h3><span class="tag" style="border-style:dashed">demo / simulation</span><span class="small muted">same shared state</span></div>
+      <div style="padding:12px 14px;display:grid;gap:12px">
+        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">IDCOL Staff</span><span class="small muted flex-1">Program administrator · all DAs</span><a class="btn btn-primary btn-sm" href="../idcol/dashboard.page.html">Open <i data-lucide="arrow-right" class="lucide"></i></a></div>
+        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">DA Agent</span><select id="sw-da" class="input flex-1" style="height:30px;font-size:12px"></select><button id="sw-go-da" class="btn btn-primary btn-sm">Open <i data-lucide="arrow-right" class="lucide"></i></button></div>
+        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">Household</span><select id="sw-hh" class="input flex-1" style="height:30px;font-size:12px"></select><button id="sw-go-hh" class="btn btn-primary btn-sm">Open <i data-lucide="arrow-right" class="lucide"></i></button></div>
+        <hr class="hr">
+        <div class="flex items-center gap-2 wrap"><a class="btn btn-secondary btn-sm" href="../app/simulation.page.html"><i data-lucide="play" class="lucide"></i> Simulation Console</a><a class="btn btn-secondary btn-sm" href="../app/home.page.html"><i data-lucide="home" class="lucide"></i> Demo home</a><button id="tb-reset" class="btn btn-danger btn-sm ml-auto"><i data-lucide="rotate-ccw" class="lucide"></i> Reset data</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="ml-auto flex items-center gap-2">
+    <span class="tag" title="Simulated date"><i data-lucide="calendar" class="lucide w-4"></i> <b id="tb-date">—</b> <span id="tb-step" class="muted"></span></span>
+    <a class="btn btn-secondary btn-sm" href="../app/simulation.page.html"><i data-lucide="play" class="lucide"></i> Simulation</a>
+    <button id="tb-guide" class="btn btn-ghost btn-sm" title="Demo guide"><i data-lucide="circle-help" class="lucide"></i> Guide</button>
+    <div style="position:relative"><button id="tb-bell" class="btn btn-ghost btn-sm" aria-label="Notifications" style="position:relative"><i data-lucide="bell" class="lucide"></i><span id="tb-bell-dot" style="display:none"></span><span id="tb-bell-count"></span></button><div id="tb-notif-dd" class="dropdown"><div class="card-head"><h3>Notifications</h3><span class="small muted">SMS + in-app</span></div><div id="tb-notif-list"></div></div></div>
+    <span id="user-select-wrap" class="flex items-center gap-1"><span class="tag" style="border-style:dashed" title="Demo / simulation tool: switches the acting IDCOL user to demonstrate maker-checker-approver separation">Simulation / acting user</span><select id="user-select" class="input" style="width:auto;height:30px;font-size:12px" title="Simulation / acting user — demo tool for maker-checker"></select></span>
+  </div>
+</header>
+<div class="brand-strip"></div>
+<div class="flex">
+<aside class="sidebar" aria-label="Navigation"><div class="sb-role"><span class="avatar" id="sb-avatar"></span><div style="min-width:0"><div class="who" id="sb-role"></div><div class="ent" id="sb-entity"></div></div></div><nav style="padding:8px 0 24px"><div class="sidebar-group"><span class="dot"></span>Demand Aggregator portal</div><a class="nav-item" data-page="dashboard" href="../da/dashboard.page.html"><i data-lucide="layout-dashboard" class="lucide"></i><span>Dashboard</span></a><a class="nav-item" data-page="households" href="../da/households.page.html"><i data-lucide="home" class="lucide"></i><span>Households</span></a><a class="nav-item" data-page="onboard-household" href="../da/onboard-household.page.html"><i data-lucide="user-plus" class="lucide"></i><span>Onboard Household</span></a><a class="nav-item" data-page="inventory" href="../da/inventory.page.html"><i data-lucide="boxes" class="lucide"></i><span>Inventory (my equipment)</span></a><a class="nav-item" data-page="collections" href="../da/collections.page.html"><i data-lucide="wallet" class="lucide"></i><span>Collections & Receipts</span></a><a class="nav-item" data-page="claims" href="../da/claims.page.html"><i data-lucide="banknote" class="lucide"></i><span>Refinance Claims</span></a><a class="nav-item" data-page="rmp" href="../da/rmp.page.html"><i data-lucide="activity" class="lucide"></i><span>Monitoring (my systems)</span></a><a class="nav-item" data-page="tickets" href="../da/tickets.page.html"><i data-lucide="message-square-warning" class="lucide"></i><span>Complaints / Tickets</span></a><a class="nav-item" data-page="idcol-facility" href="../da/idcol-facility.page.html"><i data-lucide="landmark" class="lucide"></i><span>IDCOL Facility & Repayments</span></a></nav></aside>
+<main class="content">
+<div class="page-head"><div><div class="crumbs">DA portal · Households</div><div class="flex items-center gap-3"></div><h1>My households</h1><div class="sub">All systems onboarded by this DA.</div></div><div class="actions"><a class="btn btn-primary" href="../da/onboard-household.page.html"><i data-lucide="user-plus" class="lucide"></i> Onboard household</a></div></div><div class="callout small" style="margin-bottom:16px"><i data-lucide="lock" class="lucide"></i> <b>Walled portfolio</b> — this portal shows only <b id="wall-da"></b>. Other DAs' inventory, households, collections, tickets and ledgers are not visible (§3.5.1, §3.8). Use the profile switcher to change DA.</div><div class="card"><div class="card-head" style="gap:8px"><input id="h-q" class="input" placeholder="Search…" style="width:220px;height:32px"><span class="small muted ml-auto" id="h-count"></span></div><div class="table-wrap"><table class="tbl"><thead><tr><th>System</th><th>Household</th><th>District</th><th class="num">kWp</th><th>Installed</th><th>IDCOL inspection</th><th>Claim</th><th>Next due</th><th class="num">Overdue</th><th>System / RMP</th><th>Issues</th><th></th></tr></thead><tbody id="h-rows"></tbody></table></div></div>
+</main>
+</div>
+<footer class="small muted flex wrap gap-3 items-center" style="padding:16px 24px;border-top:1px solid var(--border)"><span>IDCOL DRS Platform — interactive demo prototype</span><span>·</span><span>All data is simulated in your browser; nothing is sent anywhere.</span><span class="ml-auto">Riseup Labs · September 2026</span></footer>
+<script>
+
+UI.page({role:'da',page:'households',render:function(S){ var daId=S.sim.activeDaId, F=DRS.fmt, q=(document.getElementById('h-q').value||'').toLowerCase(); var wd=document.getElementById('wall-da'); if(wd) wd.textContent=(DRS.get.da(S.sim.activeDaId)||{}).name||'';
+  var rows=S.households.filter(function(h){return h.daId===daId&&(!q||(h.systemId+' '+h.name).toLowerCase().indexOf(q)>=0);}).slice().reverse(); document.getElementById('h-count').textContent=rows.length+' households';
+  UI.table('#h-rows',rows,[function(h){return '<a class="link mono" href="../da/household-detail.page.html?id='+h.systemId+'">'+h.systemId+'</a>';},function(h){return UI.esc(h.name)+'<div class="small muted">'+UI.esc(h.phone)+'</div>';},function(h){return UI.esc(h.district)+'<div class="small muted">'+UI.esc(h.upazila)+'</div>';},function(h){return '<span class="num">'+h.packageKwp+'</span>';},function(h){return F.date(h.installationDate);},function(h){var i=S.inspections.filter(function(x){return x.systemId===h.systemId;})[0];return i?UI.pill(i.result==='Pending'?'Pending':i.result,i.result==='Pending'?'Pending verification':i.result):'—';},function(h){var c=S.claims.filter(function(x){return x.systemId===h.systemId;})[0];return c?UI.pill(c.status):'—';},function(h){var b=DRS.get.balances(h.systemId);return b.next?F.date(b.next.dueDate):'—';},function(h){var b=DRS.get.balances(h.systemId);return '<span class="num" style="color:'+(b.overdue?'var(--error)':'inherit')+'">'+(b.overdue?F.money(b.overdue)+' · '+b.overdueDays+' d':'—')+'</span>';},function(h){var f=DRS.get.flagsFor(h.systemId);return UI.pill(h.inverterState)+(f.length?'<div class="small muted">'+f.map(UI.flagLabel).join(', ')+'</div>':'');},function(h){var t=S.complaints.filter(function(x){return x.systemId===h.systemId&&x.status!=='Resolved';});return t.length?'<a class="link" href="../da/tickets.page.html?system='+h.systemId+'">'+UI.pill(t[0].status,t.length+' open ticket'+(t.length>1?'s':''))+'</a>':'<span class="muted">—</span>';},function(h){return '<a class="btn btn-secondary btn-sm" href="../da/household-detail.page.html?id='+h.systemId+'">View</a>';}],{empty:'No households yet — onboard your first household.'});
+},init:function(){document.getElementById('h-q').addEventListener('input',function(){UI.rerender();});}});
+</script>
+</body>
+</html>

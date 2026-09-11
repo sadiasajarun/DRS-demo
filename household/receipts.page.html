@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Receipts — IDCOL DRS</title>
+<meta name="description" content="IDCOL Domestic Rooftop Solar platform — interactive demo prototype — Receipts">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Bengali:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../drs-theme.css?v=8">
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.454.0/dist/umd/lucide.min.js"></script>
+<script src="../drs-sim.js?v=7"></script>
+<script src="../drs-ui.js?v=7"></script>
+
+</head>
+<body data-role="household" data-page="receipts">
+<header class="topbar flex items-center gap-3" style="padding:0 20px">
+  <button id="tb-menu" class="btn btn-ghost btn-sm" aria-label="Menu"><i data-lucide="menu" class="lucide"></i></button>
+  <a href="../app/home.page.html" class="brand" title="IDCOL DRS — Demo home"><img src="../idcol-logo.png" alt="IDCOL — Together for Tomorrow"><span class="prog"><b>DRS Platform</b>Domestic Rooftop Solar Program</span></a>
+  <div style="position:relative">
+    <button id="tb-switcher" class="btn btn-secondary btn-sm" title="Switch profile"><i data-lucide="users" class="lucide"></i> <span id="tb-role">Profile</span> <span id="tb-entity" class="muted" style="font-weight:400;max-width:260px;overflow:hidden;text-overflow:ellipsis"></span> <i data-lucide="chevron-down" class="lucide"></i></button>
+    <div id="tb-switcher-dd" class="dropdown" style="left:0;right:auto;width:440px">
+      <div class="card-head"><h3>Switch profile</h3><span class="tag" style="border-style:dashed">demo / simulation</span><span class="small muted">same shared state</span></div>
+      <div style="padding:12px 14px;display:grid;gap:12px">
+        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">IDCOL Staff</span><span class="small muted flex-1">Program administrator · all DAs</span><a class="btn btn-primary btn-sm" href="../idcol/dashboard.page.html">Open <i data-lucide="arrow-right" class="lucide"></i></a></div>
+        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">DA Agent</span><select id="sw-da" class="input flex-1" style="height:30px;font-size:12px"></select><button id="sw-go-da" class="btn btn-primary btn-sm">Open <i data-lucide="arrow-right" class="lucide"></i></button></div>
+        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">Household</span><select id="sw-hh" class="input flex-1" style="height:30px;font-size:12px"></select><button id="sw-go-hh" class="btn btn-primary btn-sm">Open <i data-lucide="arrow-right" class="lucide"></i></button></div>
+        <hr class="hr">
+        <div class="flex items-center gap-2 wrap"><a class="btn btn-secondary btn-sm" href="../app/simulation.page.html"><i data-lucide="play" class="lucide"></i> Simulation Console</a><a class="btn btn-secondary btn-sm" href="../app/home.page.html"><i data-lucide="home" class="lucide"></i> Demo home</a><button id="tb-reset" class="btn btn-danger btn-sm ml-auto"><i data-lucide="rotate-ccw" class="lucide"></i> Reset data</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="ml-auto flex items-center gap-2">
+    <span class="tag" title="Simulated date"><i data-lucide="calendar" class="lucide w-4"></i> <b id="tb-date">—</b> <span id="tb-step" class="muted"></span></span>
+    <a class="btn btn-secondary btn-sm" href="../app/simulation.page.html"><i data-lucide="play" class="lucide"></i> Simulation</a>
+    <button id="tb-guide" class="btn btn-ghost btn-sm" title="Demo guide"><i data-lucide="circle-help" class="lucide"></i> Guide</button>
+    <div style="position:relative"><button id="tb-bell" class="btn btn-ghost btn-sm" aria-label="Notifications" style="position:relative"><i data-lucide="bell" class="lucide"></i><span id="tb-bell-dot" style="display:none"></span><span id="tb-bell-count"></span></button><div id="tb-notif-dd" class="dropdown"><div class="card-head"><h3>Notifications</h3><span class="small muted">SMS + in-app</span></div><div id="tb-notif-list"></div></div></div>
+    <span id="user-select-wrap" class="flex items-center gap-1"><span class="tag" style="border-style:dashed" title="Demo / simulation tool: switches the acting IDCOL user to demonstrate maker-checker-approver separation">Simulation / acting user</span><select id="user-select" class="input" style="width:auto;height:30px;font-size:12px" title="Simulation / acting user — demo tool for maker-checker"></select></span>
+  </div>
+</header>
+<div class="brand-strip"></div>
+<div class="flex">
+<aside class="sidebar" aria-label="Navigation"><div class="sb-role"><span class="avatar" id="sb-avatar"></span><div style="min-width:0"><div class="who" id="sb-role"></div><div class="ent" id="sb-entity"></div></div></div><nav style="padding:8px 0 24px"><div class="sidebar-group"><span class="dot"></span>Household portal</div><a class="nav-item" data-page="home" href="../household/home.page.html"><i data-lucide="home" class="lucide"></i><span>Home</span></a><a class="nav-item" data-page="system" href="../household/system.page.html"><i data-lucide="sun" class="lucide"></i><span>My System</span></a><a class="nav-item" data-page="loan" href="../household/loan.page.html"><i data-lucide="wallet" class="lucide"></i><span>My Loan</span></a><a class="nav-item" data-page="pay" href="../household/pay.page.html"><i data-lucide="credit-card" class="lucide"></i><span>Pay Installment</span></a><a class="nav-item" data-page="receipts" href="../household/receipts.page.html"><i data-lucide="receipt" class="lucide"></i><span>Receipts</span></a><a class="nav-item" data-page="complaint" href="../household/complaint.page.html"><i data-lucide="message-square-warning" class="lucide"></i><span>Complaint / Dispute</span></a></nav></aside>
+<main class="content">
+<div class="page-head"><div><h1>Receipts</h1><div class="sub" id="hh-sub">Every payment — digital, bank or cash — has a unique receipt</div></div><div class="actions"></div></div><div class="kpis" id="r-kpis"></div>
+<div class="card mt-4"><div class="card-head"><i data-lucide="history" class="lucide"></i><h3>Payment history</h3><span class="small muted">append-only — reversals and refunds are shown against the original transaction; nothing is deleted</span></div><div class="table-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Receipt</th><th class="num">Amount</th><th>Channel</th><th>Reference</th><th>Status</th><th></th></tr></thead><tbody id="r-rows"></tbody></table></div></div>
+</main>
+</div>
+<footer class="small muted flex wrap gap-3 items-center" style="padding:16px 24px;border-top:1px solid var(--border)"><span>IDCOL DRS Platform — interactive demo prototype</span><span>·</span><span>All data is simulated in your browser; nothing is sent anywhere.</span><span class="ml-auto">Riseup Labs · September 2026</span></footer>
+<script>
+
+UI.page({role:'household',page:'receipts',render:function(S){ var hh=DRS.get.household(S.sim.activeSystemId)||S.households[0]; if(!hh) return; var sid=hh.systemId, l=DRS.get.loan(sid), b=DRS.get.balances(sid), p=DRS.get.performance(sid), F=DRS.fmt, $=UI.$, esc=UI.esc, da=DRS.get.da(hh.daId); var ps=S.payments.filter(function(x){return x.systemId===sid;}).slice().reverse();
+  var pendN=ps.filter(function(x){return x.status==='Pending verification';}).length, failN=ps.filter(function(x){return x.status==='Failed';}).length, refN=ps.filter(function(x){return x.status==='Refunded';}).length;
+  UI.kpis('#r-kpis',[['Successful',ps.filter(function(x){return x.status==='Success';}).length,'posted to loan','receipt'],['Pending',pendN,'awaiting verification','clock'],['Failed',failN,'no amount debited','x-circle'],['Total paid',F.money(b.paid),b.paidCount+' installments','check-circle-2'],['Last posted payment',(function(){var ok=ps.filter(function(x){return x.status==='Success';});return ok.length?F.date(ok[0].date):'—';})(),(function(){var ok=ps.filter(function(x){return x.status==='Success';});return ok.length?ok[0].channel+' · '+F.money(ok[0].amount):'';})(),'calendar'],['Reversed / refunded',ps.filter(function(x){return x.status==='Reversed';}).length+' / '+refN,'originals kept on record','undo-2']]);
+  UI.paymentsTable('#r-rows',ps);
+}});
+</script>
+</body>
+</html>
