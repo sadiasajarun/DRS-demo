@@ -20,7 +20,19 @@
   /* ---------- table ---------- */
   function table(tbody, rows, cols, opts) {
     opts = opts || {}; var el = typeof tbody === 'string' ? $(tbody) : tbody; if (!el) return;
-    if (!rows.length) { el.innerHTML = '<tr class="empty"><td colspan="' + cols.length + '">' + esc(opts.empty || 'No records yet — run the scenario or use the actions above.') + '</td></tr>'; return; }
+    var all = rows, wrap = el.closest('.table-wrap'), foot = wrap ? wrap.nextElementSibling : null; if (foot && !foot.classList.contains('tbl-foot')) foot = null;
+    var ps = opts.pageSize || (rows.length > 30 ? 25 : 0);
+    if (ps && all.length > ps) {
+      var st = el._pg || (el._pg = { page: 0, size: ps }); var pages = Math.ceil(all.length / st.size); if (st.page >= pages) st.page = pages - 1; if (st.page < 0) st.page = 0;
+      rows = all.slice(st.page * st.size, (st.page + 1) * st.size);
+      if (!foot && wrap) { foot = document.createElement('div'); foot.className = 'tbl-foot'; wrap.insertAdjacentElement('afterend', foot); }
+      if (foot) {
+        foot.innerHTML = '<span>Showing ' + (st.page * st.size + 1) + '–' + Math.min(all.length, (st.page + 1) * st.size) + ' of ' + all.length + '</span><span class="pager"><label class="flex items-center gap-2">Rows <select class="input">' + [25, 50, 100].map(function (n) { return '<option' + (n === st.size ? ' selected' : '') + '>' + n + '</option>'; }).join('') + '</select></label><button class="btn btn-secondary btn-sm" data-pg="-1"' + (st.page === 0 ? ' disabled' : '') + '>' + ic('chevron-left') + '</button><span>' + (st.page + 1) + ' / ' + pages + '</span><button class="btn btn-secondary btn-sm" data-pg="1"' + (st.page >= pages - 1 ? ' disabled' : '') + '>' + ic('chevron-right') + '</button></span>';
+        $('select', foot).addEventListener('change', function (e) { st.size = +e.target.value; st.page = 0; table(el, all, cols, opts); });
+        $$('[data-pg]', foot).forEach(function (b) { b.addEventListener('click', function () { st.page += +b.getAttribute('data-pg'); table(el, all, cols, opts); }); });
+      }
+    } else if (foot) { foot.remove(); el._pg = null; }
+    if (!all.length) { if (foot) foot.remove(); el.innerHTML = '<tr class="empty"><td colspan="' + cols.length + '">' + esc(opts.empty || 'No records yet — run the scenario or use the actions above.') + '</td></tr>'; return; }
     el.innerHTML = rows.map(function (r, i) { var tr = '<tr' + (opts.rowClass ? ' class="' + opts.rowClass(r) + '"' : '') + (opts.href ? ' class="row-link" data-href="' + opts.href(r) + '"' : '') + '>'; cols.forEach(function (c) { var v = typeof c === 'function' ? c(r, i) : r[c]; var cls = (typeof c === 'object' && c.cls) ? c.cls : ''; tr += '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + (v == null ? '—' : v) + '</td>'; }); return tr + '</tr>'; }).join('');
     if (opts.href) $$('tr.row-link', el).forEach(function (tr) { tr.addEventListener('click', function (e) { if (e.target.closest('a,button,select,input')) return; location.href = tr.getAttribute('data-href'); }); });
     icons();
@@ -29,7 +41,7 @@
 
   /* ---------- KPI ---------- */
   function kpi(label, value, sub, iconName, small) { return '<div class="kpi"><div class="label">' + (iconName ? ic(iconName) : '') + label + '</div><div class="value' + (small ? ' sm' : '') + '">' + value + '</div><div class="sub">' + (sub || '') + '</div></div>'; }
-  function kpis(el, items) { el = typeof el === 'string' ? $(el) : el; el.style.gridTemplateColumns = 'repeat(' + items.length + ',minmax(0,1fr))'; el.innerHTML = items.map(function (i) { return kpi(i[0], i[1], i[2], i[3], i[4]); }).join(''); icons(); }
+  function kpis(el, items) { el = typeof el === 'string' ? $(el) : el; el.style.gridTemplateColumns = 'repeat(' + (items.length > 6 ? Math.ceil(items.length / 2) : items.length) + ',minmax(0,1fr))'; el.innerHTML = items.map(function (i) { return kpi(i[0], i[1], i[2], i[3], i[4]); }).join(''); icons(); }
 
   /* ---------- charts (inline SVG) ---------- */
   function lineChart(el, series, opts) {
@@ -84,7 +96,8 @@
   function applyLang() { var S = D.state(); document.documentElement.classList.remove('lang-bn'); $$('.lang-toggle span').forEach(function (s) { s.classList.toggle('active', s.getAttribute('data-lang') === S.sim.lang); }); }
   function renderShell(role) {
     var S = D.state(); var entity = role === 'da' ? (G.da(S.sim.activeDaId) || {}).name : role === 'household' ? ((G.household(S.sim.activeSystemId) || {}).name + ' · ' + S.sim.activeSystemId) : role === 'idcol' ? 'Program Unit · Program-wide view' : 'IDCOL · DA · Household — shared live state';
-    var r = $('#tb-role'); if (r) r.textContent = ROLE_LABEL[role] || role; var e = $('#tb-entity'); if (e) e.textContent = entity || ''; var d = $('#tb-date'); if (d) d.textContent = F.date(S.sim.today); var stp = $('#tb-step'); if (stp) stp.textContent = 'step ' + S.sim.step + '/11';
+    var r = $('#tb-role'); if (r) r.textContent = ROLE_LABEL[role] || role;
+    var ph = $('.page-head > div'); if (ph && role !== 'app' && !$('.crumbs', ph)) { var act = $('.nav-item.active span'); var cr = document.createElement('div'); cr.className = 'crumbs'; cr.innerHTML = esc((ROLE_LABEL[role] || role) + ' portal') + ic('chevron-right') + '<span>' + esc(act ? act.textContent : document.title.split(' — ')[0]) + '</span>'; ph.insertBefore(cr, ph.firstChild); } var e = $('#tb-entity'); if (e) e.textContent = entity || ''; var d = $('#tb-date'); if (d) d.textContent = F.date(S.sim.today); var stp = $('#tb-step'); if (stp) stp.textContent = 'step ' + S.sim.step + '/11';
     var daSel = $('#sw-da'); if (daSel) daSel.innerHTML = S.das.map(function (x) { return '<option value="' + x.id + '"' + (x.id === S.sim.activeDaId ? ' selected' : '') + '>' + esc(x.name) + '</option>'; }).join('');
     var hhSel = $('#sw-hh'); if (hhSel) hhSel.innerHTML = S.households.map(function (x) { return '<option value="' + x.systemId + '"' + (x.systemId === S.sim.activeSystemId ? ' selected' : '') + '>' + esc(x.name) + ' · ' + x.systemId + '</option>'; }).join('');
     var aud = audience(role); var unread = G.notificationsFor(aud).filter(function (n) { return !n.read; }).length; var cnt = $('#tb-bell-count'); if (cnt) { cnt.textContent = unread > 9 ? '9+' : unread; cnt.style.display = unread ? 'inline-flex' : 'none'; } var nl = $('#tb-notif-list'); if (nl) notifList(nl, aud, 8);
@@ -101,7 +114,7 @@
     var goHh = $('#sw-go-hh'); if (goHh) goHh.addEventListener('click', function () { D.act.setActiveSystem($('#sw-hh').value); location.href = '../household/home.page.html'; });
     $$('.lang-toggle span').forEach(function (s) { s.addEventListener('click', function () { D.act.setLang(s.getAttribute('data-lang')); applyLang(); if (currentPage && currentPage.render) currentPage.render(D.state()); renderShell(role); }); });
     var mn = $('#tb-menu'); if (mn) mn.addEventListener('click', function (e) { e.stopPropagation(); document.body.classList.toggle('nav-open'); });
-    var gd = $('#tb-guide'); if (gd) gd.addEventListener('click', function () { modal({ title: 'How to use this demo', icon: 'circle-help', wide: true, body: GUIDE_HTML, footer: '<a class="btn btn-primary" href="../app/simulation.page.html">Open Simulation Console</a>' }); });
+    var gd = $('#tb-guide'); if (gd) gd.addEventListener('click', function () { modal({ title: 'How to use this demo', icon: 'circle-help', wide: true, body: GUIDE_HTML, footer: '<button class="btn btn-secondary" id="guide-tour">' + ic('compass') + ' Start walkthrough</button><a class="btn btn-primary" href="../app/simulation.page.html">Open Simulation</a>', onOpen: function (ov) { var b = $('#guide-tour', ov); if (b) b.addEventListener('click', function () { closeModal(); if (global.UI && global.UI.tour) global.UI.tour.start(); }); } }); });
     document.addEventListener('click', function (e) { if (document.body.classList.contains('nav-open') && !e.target.closest('.sidebar') && !e.target.closest('#tb-menu')) document.body.classList.remove('nav-open'); });
     var rs = $('#tb-reset'); if (rs) rs.addEventListener('click', function () { confirm({ title: 'Reset demo data', body: 'This restores the seed data (3 DAs, 14 households, batches, telemetry, payments) and returns the scenario to step 0.', ok: 'Reset', danger: true, icon: 'rotate-ccw' }).then(function (ok) { if (ok) { D.reset(); toast('Demo data reset to seed', 'success'); } }); });
     $$('.nav-item').forEach(function (a) { if (a.getAttribute('data-page') === currentPage.page) a.classList.add('active'); });
@@ -122,4 +135,89 @@
   function csv(rows, cols, name) { var out = [cols.map(function (c) { return c.label; }).join(',')].concat(rows.map(function (r) { return cols.map(function (c) { var v = typeof c.get === 'function' ? c.get(r) : r[c.get]; return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }).join(','); })).join('\n'); var blob = new Blob([out], { type: 'text/csv' }); var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name || 'export.csv'; document.body.appendChild(a); a.click(); a.remove(); toast('CSV exported (' + rows.length + ' rows)', 'success'); }
 
   global.UI = { esc: esc, can: can, actorUser: actorUser, ruleTag: ruleTag, demoTag: demoTag, $: $, $$: $$, ic: ic, icons: icons, pill: pill, tag: tag, modTag: modTag, flagLabel: flagLabel, table: table, kpi: kpi, kpis: kpis, lineChart: lineChart, barChart: barChart, hbars: hbars, telemetryChart: telemetryChart, toast: toast, modal: modal, closeModal: closeModal, confirm: confirm, drawer: drawer, closeDrawer: closeDrawer, run: run, receiptHtml: receiptHtml, showReceipt: showReceipt, scheduleTable: scheduleTable, paymentsTable: paymentsTable, notifList: notifList, statusBanner: statusBanner, serialCheckTable: serialCheckTable, page: page, rerender: rerender, audience: audience, actor: actor, qs: qs, tabs: tabs, daOption: daOption, csv: csv, renderShell: renderShell, applyLang: applyLang };
+})(window);
+
+/* ---------- Guided walkthrough: "How to use this prototype" (first visit only, skippable, spans roles → simulation) ---------- */
+(function (global) {
+  var UI = global.UI, $ = UI.$, esc = UI.esc, ic = UI.ic;
+  var KEY_DONE = 'drs-tour-done', KEY_STATE = 'drs-tour';
+  var STEPS = [
+    { page: 'app/home', sel: null, title: 'Welcome to the IDCOL DRS prototype', text: 'This short walkthrough shows how the demo is organised: three role portals that share one live state, and a guided simulation that connects them. Use <b>Next</b> to move on, or <b>Skip</b> at any time — it only appears on your first visit.' },
+    { page: 'app/home', sel: '.tb-context', title: 'Switch profile anytime', text: 'The profile switcher in the top bar lets you jump between <b>IDCOL Staff</b>, a <b>DA Agent</b> and a <b>Household</b>. Everything you do in one portal is instantly visible in the others.' },
+    { page: 'app/home', sel: '#home-roles', title: 'Start with a role', text: 'Enter the portals in order — <b>Household</b> (customer view), then <b>DA Agent</b> (field and portfolio operations), then <b>IDCOL Staff</b> (program-wide control). Pick a household or DA from the dropdown before entering.' },
+    { page: 'app/home', sel: '.final-card', title: 'Last step: the Connected Journey Simulation', text: 'Once you have seen each portal, the simulation runs guided journeys and shows how every step changes all three portals at once. The walkthrough will take you there at the end.' },
+    { page: 'household/home', sel: '#h-banner', title: 'Household portal — system status', text: 'The household sees its own system only: live status (running / halted / offline), alerts that need action, generation and the next installment.' },
+    { page: 'household/home', sel: '.sidebar nav', title: 'Household menu', text: '<b>My System</b> (generation), <b>My Loan</b> (schedule and balance), <b>Pay Installment</b>, <b>Receipts</b> and <b>Complaint / Dispute</b>. Plain language — no technical terms.' },
+    { page: 'household/home', sel: '.page-head .actions', title: 'Paying an installment', text: 'Pay by bKash, Nagad, card or internet banking (posted instantly with a receipt), or submit a bank transfer / cash collection that is verified before posting. Try it after the walkthrough.' },
+    { page: 'da/dashboard', sel: '#da-kpis', title: 'DA Agent portal — portfolio at a glance', text: 'A DA sees only its own data: systems, stock, collections, overdue accounts, claims and its refinance headroom with IDCOL.' },
+    { page: 'da/dashboard', sel: '.sidebar nav', title: 'DA menu', text: 'Households, <b>Onboard Household</b> (5-step wizard using only this DA\'s verified stock), Inventory, Collections &amp; Receipts, Refinance Claims, Monitoring, Complaints / Tickets and the IDCOL Facility.' },
+    { page: 'da/dashboard', sel: '.nav-item[data-page=onboard-household]', title: 'Onboarding a household', text: 'Equipment models and serials are drop-downs limited to this DA\'s in-stock units; validation runs step by step and the refinance claim stays "Not eligible" until IDCOL inspects the system.' },
+    { page: 'idcol/dashboard', sel: '.sidebar nav', title: 'IDCOL Staff portal — four modules', text: 'Navigation is grouped by module: <b>MIS</b> (DAs, equipment, inventory, households), <b>Inspection</b> (queue, claims &amp; disbursement), <b>RMP</b> (monitoring, command log) and <b>CRM / Finance</b> (portfolio, loan ledger, reconciliation, halt/resume, tickets), plus Administration.' },
+    { page: 'idcol/dashboard', sel: '#user-select-wrap', title: 'Acting user (demo tool)', text: 'Switch the acting IDCOL user to demonstrate maker-checker-approver separation — for example review a claim as A. Karim and approve it as S. Chowdhury. The same person cannot do both.' },
+    { page: 'idcol/dashboard', sel: '#d-kpis', title: 'Program overview', text: 'High-priority KPIs first, then the "needs attention" tiles for each module, then trends. Every figure here comes from the same shared state the DA and household portals use.' },
+    { page: 'app/simulation', sel: '#jsel', title: 'Simulation — choose a journey', text: 'Six business journeys cover the full lifecycle: DA setup, household onboarding, inspection to refinance, payment, overdue-halt-resume and support. Click one to jump straight to it.' },
+    { page: 'app/simulation', sel: '.ctrl', title: 'Step controls', text: '<b>Run next step</b> performs the real actions of the next step on the shared state; <b>Prev</b> replays to the previous step, <b>Auto-play</b> runs the whole scenario, <b>Reset</b> returns to the starting data. The label tells you what comes next.' },
+    { page: 'app/simulation', sel: '.sim-grid', title: 'What changed in each portal', text: 'The three live portals update together; rows touched by the step are highlighted in amber and each panel shows a one-line impact and status. Every button inside them still performs a real action.' },
+    { page: 'app/simulation', sel: '#sim-pane', title: 'Step details pane', text: 'What happened, why the next step depends on it, the entities involved and links to the relevant full pages. Collapse it with the icon to give the portals more room.' },
+    { page: 'app/simulation', sel: null, title: 'You are ready', text: 'That is the whole prototype. Start with <b>Journey 1</b> here, or use the profile switcher to explore any portal. You can reopen this walkthrough anytime from the <b>?</b> help button in the top bar.', last: true }
+  ];
+  var INTRO_END = { page: 'app/home', sel: null, title: 'That is the quick introduction', text: 'You now know the three roles and where the simulation is. For the <b>full walkthrough</b> — inside each portal and every part of the simulation — use the <b>Walkthrough</b> link on this page or the <b>?</b> help button in the top bar at any time.', last: true };
+  var MODE = 'full';
+  function steps() { return MODE === 'short' ? STEPS.slice(0, 4).concat([INTRO_END]) : STEPS; }
+  function pageKey() { return document.body.getAttribute('data-role') + '/' + document.body.getAttribute('data-page'); }
+  function href(page) { return '../' + page + '.page.html'; }
+  function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } }
+  function state() { try { return JSON.parse(ls(KEY_STATE) || 'null'); } catch (e) { return null; } }
+  function save(i) { ls(KEY_STATE, JSON.stringify({ step: i, active: true, mode: MODE })); }
+  var cur = -1, box, card, chip, onMove;
+  function clear() { if (box) box.remove(); if (card) card.remove(); if (chip) chip.remove(); box = card = chip = null; if (onMove) { window.removeEventListener('resize', onMove); window.removeEventListener('scroll', onMove, true); onMove = null; } }
+  function finish() { clear(); ls(KEY_STATE, null); ls(KEY_DONE, '1'); }
+  function go(i) {
+    var S = steps(); if (i < 0) i = 0; if (i >= S.length) { finish(); return; }
+    var st = S[i];
+    if (st.page !== pageKey()) { save(i); try { sessionStorage.setItem('drs-tour-nav', '1'); } catch (e) {} location.href = href(st.page); return; }
+    save(i); cur = i; render();
+  }
+  function place(target) {
+    var pad = 8, r = target ? target.getBoundingClientRect() : null;
+    if (r) { box.style.display = 'block'; box.style.left = (r.left - pad) + 'px'; box.style.top = (r.top - pad) + 'px'; box.style.width = (r.width + pad * 2) + 'px'; box.style.height = (r.height + pad * 2) + 'px'; }
+    else { box.style.display = 'block'; box.style.left = '50%'; box.style.top = '50%'; box.style.width = '0'; box.style.height = '0'; }
+    var cw = card.offsetWidth, ch = card.offsetHeight, vw = window.innerWidth, vh = window.innerHeight, gap = 14, x, y, side = 'bottom';
+    if (!r) { x = (vw - cw) / 2; y = (vh - ch) / 2; side = 'center'; }
+    else if (r.bottom + gap + ch < vh) { x = r.left; y = r.bottom + gap + pad; side = 'bottom'; }
+    else if (r.top - gap - ch > 0) { x = r.left; y = r.top - gap - pad - ch; side = 'top'; }
+    else if (r.right + gap + cw < vw) { x = r.right + gap + pad; y = Math.max(72, r.top); side = 'right'; }
+    else { x = r.left - gap - pad - cw; y = Math.max(72, r.top); side = 'left'; }
+    x = Math.max(12, Math.min(x, vw - cw - 12)); y = Math.max(72, Math.min(y, vh - ch - 12));
+    card.style.left = x + 'px'; card.style.top = y + 'px'; card.setAttribute('data-side', side);
+  }
+  function render() {
+    clear(); var S = steps(), st = S[cur], target = st.sel ? document.querySelector(st.sel) : null;
+    if (st.sel && !target) { go(cur + 1); return; }
+    box = document.createElement('div'); box.className = 'tour-box'; document.body.appendChild(box);
+    card = document.createElement('div'); card.className = 'tour-card'; card.setAttribute('role', 'dialog');
+    card.innerHTML = '<div class="tour-head"><span class="eyebrow">' + (MODE === 'short' ? 'Quick introduction' : 'How to use this prototype') + '</span><span class="tour-n">' + (cur + 1) + ' / ' + S.length + '</span></div><h3>' + esc(st.title) + '</h3><p>' + st.text + '</p><div class="tour-progress"><div style="width:' + Math.round((cur + 1) / S.length * 100) + '%"></div></div><div class="tour-foot">' + (st.last ? '<button class="btn btn-ghost btn-sm" data-t="back">' + ic('chevron-left') + ' Back</button><span class="flex gap-2 ml-auto">' + (pageKey() === 'app/simulation' ? '<button class="btn btn-secondary btn-sm" data-t="start">' + ic('play') + ' Start Journey 1</button>' : (MODE === 'short' ? '<button class="btn btn-secondary btn-sm" data-t="full">' + ic('compass') + ' Full walkthrough</button>' : '')) + '<button class="btn btn-primary btn-sm" data-t="done">Done ' + ic('check') + '</button></span>' : '<button class="btn btn-ghost btn-sm" data-t="skip">Skip</button><span class="flex gap-2 ml-auto">' + (cur > 0 ? '<button class="btn btn-secondary btn-sm" data-t="back">' + ic('chevron-left') + ' Back</button>' : '') + '<button class="btn btn-primary btn-sm" data-t="next">Next ' + ic('chevron-right') + '</button></span>') + '</div>';
+    document.body.appendChild(card); UI.icons();
+    card.addEventListener('click', function (e) { var b = e.target.closest('[data-t]'); if (!b) return; var t = b.getAttribute('data-t'); if (t === 'skip' || t === 'done') finish(); else if (t === 'next') go(cur + 1); else if (t === 'back') go(cur - 1); else if (t === 'start') { finish(); var j = document.querySelector('[data-j="1"]'); if (j) j.click(); } else if (t === 'full') { ls(KEY_DONE, '1'); MODE = 'full'; go(0); } });
+    if (target) { target.scrollIntoView({ block: 'center', inline: 'nearest' }); }
+    var reposition = function () { place(target); }; setTimeout(reposition, 60); onMove = reposition; window.addEventListener('resize', onMove); window.addEventListener('scroll', onMove, true);
+    place(target);
+  }
+  function showChip(i) {
+    chip = document.createElement('button'); chip.className = 'tour-chip'; chip.innerHTML = ic('compass') + ' Continue walkthrough <span class="muted">(' + (i + 1) + ' / ' + steps().length + ')</span> <span class="tour-x" title="Dismiss">' + ic('x') + '</span>';
+    chip.addEventListener('click', function (e) { if (e.target.closest('.tour-x')) { finish(); return; } go(i); }); document.body.appendChild(chip); UI.icons();
+  }
+  function boot() {
+    if (document.body.getAttribute('data-page') === 'login' || document.body.getAttribute('data-page') === 'modules') return;
+    if (UI.qs && UI.qs('tour') === '1') { ls(KEY_DONE, '1'); ls(KEY_STATE, null); MODE = 'full'; setTimeout(function () { go(0); }, 300); return; }
+    var s = state();
+    if (s && s.active) { MODE = s.mode || 'full'; var st = steps()[s.step]; var nav = false; try { nav = sessionStorage.getItem('drs-tour-nav') === '1'; sessionStorage.removeItem('drs-tour-nav'); } catch (e) {} if (st && st.page === pageKey() && nav) { cur = s.step; setTimeout(render, 150); } else if (st) { showChip(s.step); } return; }
+    /* First-visit quick introduction (5 steps on the home page) — disabled for now; uncomment to re-enable.
+    if (ls(KEY_DONE)) return;
+    if (pageKey() === 'app/home') { MODE = 'short'; setTimeout(function () { go(0); }, 400); }
+    */
+  }
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && card) finish(); });
+  var origPage = UI.page; UI.page = function (def) { origPage(def); boot(); };
+  UI.tour = { start: function () { ls(KEY_DONE, '1'); MODE = 'full'; go(0); }, steps: STEPS };
 })(window);

@@ -5,35 +5,39 @@
 <title>Complaint / Dispute — IDCOL DRS</title>
 <meta name="description" content="IDCOL Domestic Rooftop Solar platform — interactive demo prototype — Complaint / Dispute">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Bengali:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../drs-theme.css?v=8">
+<link rel="stylesheet" href="../drs-theme.css?v=22">
 <script src="https://cdn.jsdelivr.net/npm/lucide@0.454.0/dist/umd/lucide.min.js"></script>
 <script src="../drs-sim.js?v=7"></script>
-<script src="../drs-ui.js?v=7"></script>
+<script src="../drs-ui.js?v=11"></script>
 
 </head>
 <body data-role="household" data-page="complaint">
-<header class="topbar flex items-center gap-3" style="padding:0 20px">
-  <button id="tb-menu" class="btn btn-ghost btn-sm" aria-label="Menu"><i data-lucide="menu" class="lucide"></i></button>
-  <a href="../app/home.page.html" class="brand" title="IDCOL DRS — Demo home"><img src="../idcol-logo.png" alt="IDCOL — Together for Tomorrow"><span class="prog"><b>DRS Platform</b>Domestic Rooftop Solar Program</span></a>
-  <div style="position:relative">
-    <button id="tb-switcher" class="btn btn-secondary btn-sm" title="Switch profile"><i data-lucide="users" class="lucide"></i> <span id="tb-role">Profile</span> <span id="tb-entity" class="muted" style="font-weight:400;max-width:260px;overflow:hidden;text-overflow:ellipsis"></span> <i data-lucide="chevron-down" class="lucide"></i></button>
-    <div id="tb-switcher-dd" class="dropdown" style="left:0;right:auto;width:440px">
-      <div class="card-head"><h3>Switch profile</h3><span class="tag" style="border-style:dashed">demo / simulation</span><span class="small muted">same shared state</span></div>
-      <div style="padding:12px 14px;display:grid;gap:12px">
-        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">IDCOL Staff</span><span class="small muted flex-1">Program administrator · all DAs</span><a class="btn btn-primary btn-sm" href="../idcol/dashboard.page.html">Open <i data-lucide="arrow-right" class="lucide"></i></a></div>
-        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">DA Agent</span><select id="sw-da" class="input flex-1" style="height:30px;font-size:12px"></select><button id="sw-go-da" class="btn btn-primary btn-sm">Open <i data-lucide="arrow-right" class="lucide"></i></button></div>
-        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">Household</span><select id="sw-hh" class="input flex-1" style="height:30px;font-size:12px"></select><button id="sw-go-hh" class="btn btn-primary btn-sm">Open <i data-lucide="arrow-right" class="lucide"></i></button></div>
-        <hr class="hr">
-        <div class="flex items-center gap-2 wrap"><a class="btn btn-secondary btn-sm" href="../app/simulation.page.html"><i data-lucide="play" class="lucide"></i> Simulation Console</a><a class="btn btn-secondary btn-sm" href="../app/home.page.html"><i data-lucide="home" class="lucide"></i> Demo home</a><button id="tb-reset" class="btn btn-danger btn-sm ml-auto"><i data-lucide="rotate-ccw" class="lucide"></i> Reset data</button></div>
+<header class="topbar">
+  <div class="tb-left">
+    <button id="tb-menu" class="tb-icon" aria-label="Menu"><i data-lucide="menu" class="lucide"></i></button>
+    <a href="../app/home.page.html" class="brand" title="IDCOL DRS — Demo home"><img src="../idcol-logo.png" alt="IDCOL — Together for Tomorrow"><span class="prog"><b>DRS Platform</b>Domestic Rooftop Solar Program</span></a>
+  </div>
+  <div class="tb-center">
+    <div style="position:relative">
+      <button id="tb-switcher" class="tb-context" title="Switch profile"><i data-lucide="users" class="lucide"></i> <b id="tb-role">Profile</b> <span id="tb-entity" class="muted"></span> <i data-lucide="chevron-down" class="lucide"></i></button>
+      <div id="tb-switcher-dd" class="dropdown" style="left:0;right:auto;width:460px">
+        <div class="card-head"><h3>Switch profile</h3><span class="small muted">same shared demo state</span></div>
+        <div style="padding:14px 16px;display:grid;gap:12px">
+          <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">IDCOL Staff</span><span class="small muted flex-1">Program administrator · all DAs</span><a class="btn btn-primary btn-sm" href="../idcol/dashboard.page.html">Open <i data-lucide="arrow-right" class="lucide"></i></a></div>
+          <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">DA Agent</span><select id="sw-da" class="input flex-1" style="height:32px;font-size:12.5px"></select><button id="sw-go-da" class="btn btn-primary btn-sm">Open <i data-lucide="arrow-right" class="lucide"></i></button></div>
+          <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">Household</span><select id="sw-hh" class="input flex-1" style="height:32px;font-size:12.5px"></select><button id="sw-go-hh" class="btn btn-primary btn-sm">Open <i data-lucide="arrow-right" class="lucide"></i></button></div>
+          <hr class="hr">
+          <div class="flex items-center gap-2 wrap"><a class="btn btn-secondary btn-sm" href="../app/simulation.page.html"><i data-lucide="play" class="lucide"></i> Simulation</a><a class="btn btn-secondary btn-sm" href="../app/home.page.html"><i data-lucide="home" class="lucide"></i> Demo home</a><button id="tb-reset" class="btn btn-danger btn-sm ml-auto"><i data-lucide="rotate-ccw" class="lucide"></i> Reset data</button></div>
+        </div>
       </div>
     </div>
+    <span id="user-select-wrap"><span title="Demo tool: switch the acting IDCOL user to show maker-checker-approver separation">Acting as</span><select id="user-select" class="input" title="Simulation / acting user — demo tool for maker-checker"></select></span>
   </div>
-  <div class="ml-auto flex items-center gap-2">
-    <span class="tag" title="Simulated date"><i data-lucide="calendar" class="lucide w-4"></i> <b id="tb-date">—</b> <span id="tb-step" class="muted"></span></span>
+  <div class="tb-right">
+    <span class="tb-chip" title="Simulated date"><i data-lucide="calendar" class="lucide"></i> <b id="tb-date">—</b> <span id="tb-step"></span></span>
     <a class="btn btn-secondary btn-sm" href="../app/simulation.page.html"><i data-lucide="play" class="lucide"></i> Simulation</a>
-    <button id="tb-guide" class="btn btn-ghost btn-sm" title="Demo guide"><i data-lucide="circle-help" class="lucide"></i> Guide</button>
-    <div style="position:relative"><button id="tb-bell" class="btn btn-ghost btn-sm" aria-label="Notifications" style="position:relative"><i data-lucide="bell" class="lucide"></i><span id="tb-bell-dot" style="display:none"></span><span id="tb-bell-count"></span></button><div id="tb-notif-dd" class="dropdown"><div class="card-head"><h3>Notifications</h3><span class="small muted">SMS + in-app</span></div><div id="tb-notif-list"></div></div></div>
-    <span id="user-select-wrap" class="flex items-center gap-1"><span class="tag" style="border-style:dashed" title="Demo / simulation tool: switches the acting IDCOL user to demonstrate maker-checker-approver separation">Simulation / acting user</span><select id="user-select" class="input" style="width:auto;height:30px;font-size:12px" title="Simulation / acting user — demo tool for maker-checker"></select></span>
+    <div style="position:relative"><button id="tb-bell" class="tb-icon" aria-label="Notifications"><i data-lucide="bell" class="lucide"></i><span id="tb-bell-dot" style="display:none"></span><span id="tb-bell-count"></span></button><div id="tb-notif-dd" class="dropdown"><div class="card-head"><h3>Notifications</h3><span class="small muted">SMS + in-app</span></div><div id="tb-notif-list"></div></div></div>
+    <button id="tb-guide" class="tb-icon" title="Demo guide"><i data-lucide="circle-help" class="lucide"></i></button>
   </div>
 </header>
 <div class="brand-strip"></div>

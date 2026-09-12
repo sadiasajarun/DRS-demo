@@ -5,35 +5,39 @@
 <title>Connected Journey Simulation — IDCOL DRS</title>
 <meta name="description" content="IDCOL Domestic Rooftop Solar platform — interactive demo prototype — Connected Journey Simulation">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Bengali:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../drs-theme.css?v=8">
+<link rel="stylesheet" href="../drs-theme.css?v=22">
 <script src="https://cdn.jsdelivr.net/npm/lucide@0.454.0/dist/umd/lucide.min.js"></script>
 <script src="../drs-sim.js?v=7"></script>
-<script src="../drs-ui.js?v=7"></script>
+<script src="../drs-ui.js?v=11"></script>
 
 </head>
 <body data-role="app" data-page="simulation">
-<header class="topbar flex items-center gap-3" style="padding:0 20px">
-  <button id="tb-menu" class="btn btn-ghost btn-sm" aria-label="Menu"><i data-lucide="menu" class="lucide"></i></button>
-  <a href="../app/home.page.html" class="brand" title="IDCOL DRS — Demo home"><img src="../idcol-logo.png" alt="IDCOL — Together for Tomorrow"><span class="prog"><b>DRS Platform</b>Domestic Rooftop Solar Program</span></a>
-  <div style="position:relative">
-    <button id="tb-switcher" class="btn btn-secondary btn-sm" title="Switch profile"><i data-lucide="users" class="lucide"></i> <span id="tb-role">Profile</span> <span id="tb-entity" class="muted" style="font-weight:400;max-width:260px;overflow:hidden;text-overflow:ellipsis"></span> <i data-lucide="chevron-down" class="lucide"></i></button>
-    <div id="tb-switcher-dd" class="dropdown" style="left:0;right:auto;width:440px">
-      <div class="card-head"><h3>Switch profile</h3><span class="tag" style="border-style:dashed">demo / simulation</span><span class="small muted">same shared state</span></div>
-      <div style="padding:12px 14px;display:grid;gap:12px">
-        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">IDCOL Staff</span><span class="small muted flex-1">Program administrator · all DAs</span><a class="btn btn-primary btn-sm" href="../idcol/dashboard.page.html">Open <i data-lucide="arrow-right" class="lucide"></i></a></div>
-        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">DA Agent</span><select id="sw-da" class="input flex-1" style="height:30px;font-size:12px"></select><button id="sw-go-da" class="btn btn-primary btn-sm">Open <i data-lucide="arrow-right" class="lucide"></i></button></div>
-        <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">Household</span><select id="sw-hh" class="input flex-1" style="height:30px;font-size:12px"></select><button id="sw-go-hh" class="btn btn-primary btn-sm">Open <i data-lucide="arrow-right" class="lucide"></i></button></div>
-        <hr class="hr">
-        <div class="flex items-center gap-2 wrap"><a class="btn btn-secondary btn-sm" href="../app/simulation.page.html"><i data-lucide="play" class="lucide"></i> Simulation Console</a><a class="btn btn-secondary btn-sm" href="../app/home.page.html"><i data-lucide="home" class="lucide"></i> Demo home</a><button id="tb-reset" class="btn btn-danger btn-sm ml-auto"><i data-lucide="rotate-ccw" class="lucide"></i> Reset data</button></div>
+<header class="topbar">
+  <div class="tb-left">
+    <button id="tb-menu" class="tb-icon" aria-label="Menu"><i data-lucide="menu" class="lucide"></i></button>
+    <a href="../app/home.page.html" class="brand" title="IDCOL DRS — Demo home"><img src="../idcol-logo.png" alt="IDCOL — Together for Tomorrow"><span class="prog"><b>DRS Platform</b>Domestic Rooftop Solar Program</span></a>
+  </div>
+  <div class="tb-center">
+    <div style="position:relative">
+      <button id="tb-switcher" class="tb-context" title="Switch profile"><i data-lucide="users" class="lucide"></i> <b id="tb-role">Profile</b> <span id="tb-entity" class="muted"></span> <i data-lucide="chevron-down" class="lucide"></i></button>
+      <div id="tb-switcher-dd" class="dropdown" style="left:0;right:auto;width:460px">
+        <div class="card-head"><h3>Switch profile</h3><span class="small muted">same shared demo state</span></div>
+        <div style="padding:14px 16px;display:grid;gap:12px">
+          <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">IDCOL Staff</span><span class="small muted flex-1">Program administrator · all DAs</span><a class="btn btn-primary btn-sm" href="../idcol/dashboard.page.html">Open <i data-lucide="arrow-right" class="lucide"></i></a></div>
+          <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">DA Agent</span><select id="sw-da" class="input flex-1" style="height:32px;font-size:12.5px"></select><button id="sw-go-da" class="btn btn-primary btn-sm">Open <i data-lucide="arrow-right" class="lucide"></i></button></div>
+          <div class="flex items-center gap-3"><span class="tag" style="width:96px;justify-content:center">Household</span><select id="sw-hh" class="input flex-1" style="height:32px;font-size:12.5px"></select><button id="sw-go-hh" class="btn btn-primary btn-sm">Open <i data-lucide="arrow-right" class="lucide"></i></button></div>
+          <hr class="hr">
+          <div class="flex items-center gap-2 wrap"><a class="btn btn-secondary btn-sm" href="../app/simulation.page.html"><i data-lucide="play" class="lucide"></i> Simulation</a><a class="btn btn-secondary btn-sm" href="../app/home.page.html"><i data-lucide="home" class="lucide"></i> Demo home</a><button id="tb-reset" class="btn btn-danger btn-sm ml-auto"><i data-lucide="rotate-ccw" class="lucide"></i> Reset data</button></div>
+        </div>
       </div>
     </div>
+    <span id="user-select-wrap"><span title="Demo tool: switch the acting IDCOL user to show maker-checker-approver separation">Acting as</span><select id="user-select" class="input" title="Simulation / acting user — demo tool for maker-checker"></select></span>
   </div>
-  <div class="ml-auto flex items-center gap-2">
-    <span class="tag" title="Simulated date"><i data-lucide="calendar" class="lucide w-4"></i> <b id="tb-date">—</b> <span id="tb-step" class="muted"></span></span>
+  <div class="tb-right">
+    <span class="tb-chip" title="Simulated date"><i data-lucide="calendar" class="lucide"></i> <b id="tb-date">—</b> <span id="tb-step"></span></span>
     <a class="btn btn-secondary btn-sm" href="../app/simulation.page.html"><i data-lucide="play" class="lucide"></i> Simulation</a>
-    <button id="tb-guide" class="btn btn-ghost btn-sm" title="Demo guide"><i data-lucide="circle-help" class="lucide"></i> Guide</button>
-    <div style="position:relative"><button id="tb-bell" class="btn btn-ghost btn-sm" aria-label="Notifications" style="position:relative"><i data-lucide="bell" class="lucide"></i><span id="tb-bell-dot" style="display:none"></span><span id="tb-bell-count"></span></button><div id="tb-notif-dd" class="dropdown"><div class="card-head"><h3>Notifications</h3><span class="small muted">SMS + in-app</span></div><div id="tb-notif-list"></div></div></div>
-    <span id="user-select-wrap" class="flex items-center gap-1"><span class="tag" style="border-style:dashed" title="Demo / simulation tool: switches the acting IDCOL user to demonstrate maker-checker-approver separation">Simulation / acting user</span><select id="user-select" class="input" style="width:auto;height:30px;font-size:12px" title="Simulation / acting user — demo tool for maker-checker"></select></span>
+    <div style="position:relative"><button id="tb-bell" class="tb-icon" aria-label="Notifications"><i data-lucide="bell" class="lucide"></i><span id="tb-bell-dot" style="display:none"></span><span id="tb-bell-count"></span></button><div id="tb-notif-dd" class="dropdown"><div class="card-head"><h3>Notifications</h3><span class="small muted">SMS + in-app</span></div><div id="tb-notif-list"></div></div></div>
+    <button id="tb-guide" class="tb-icon" title="Demo guide"><i data-lucide="circle-help" class="lucide"></i></button>
   </div>
 </header>
 <div class="brand-strip"></div>
@@ -42,28 +46,28 @@
 <main class="content">
 
 <div class="sim-head">
-  <div>
+  <div class="sim-title">
     <span class="tag demo-mode"><i data-lucide="sparkles" class="lucide w-4"></i> Guided Demo Mode</span>
     <h1>Connected Journey Simulation</h1>
     <div class="sub">One shared demo state across IDCOL, DA and Household.</div>
   </div>
-  <div class="sim-utils">
-    <span class="tag util-date"><i data-lucide="calendar" class="lucide w-4"></i> <b id="sim-date">—</b><span class="muted" id="sim-counter"></span></span>
-    <button class="btn btn-secondary btn-sm" id="sim-d1">+1 day</button>
-    <button class="btn btn-secondary btn-sm" id="sim-d10">+10 days</button>
-    <span class="vsep"></span>
-    <button class="btn btn-secondary btn-sm" id="sim-reset"><i data-lucide="rotate-ccw" class="lucide"></i> Reset</button>
-    <button class="btn btn-secondary btn-sm" id="sim-prev"><i data-lucide="chevron-left" class="lucide"></i> Prev</button>
-    <button class="btn btn-primary btn-sm" id="sim-next">Next <i data-lucide="chevron-right" class="lucide"></i></button>
-    <button class="btn btn-secondary btn-sm" id="sim-auto"><i data-lucide="play" class="lucide"></i> Auto-play</button>
-  </div>
+  <div class="chain chain-head" id="chain"></div>
 </div>
-<div class="section-head"><h2>Choose a journey</h2><span class="sub">each journey runs the real actions on the shared state</span></div>
-<div class="jsel" id="jsel"></div>
-<div class="card story mt-4" id="story"></div>
-<div class="chain-wrap mt-4" id="chain"></div>
-<div class="section-head mt-5"><h2>What this step changed in each portal</h2><span class="sub">live portal views — rows touched by this step are highlighted</span><span class="legend ml-auto"><span class="hl-swatch"></span> changed in this step</span></div>
-<div class="sim-grid mt-3">
+<div class="sim-layout" id="sim-layout">
+  <div class="sim-main">
+    <div class="section-head"><h2>Choose a journey</h2><span class="sub">each journey runs the real actions on the shared state</span></div>
+    <div class="jsel" id="jsel"></div>
+    <div class="panel-controls mt-5">
+      <div class="pc-title"><h2>What this step changed in each portal</h2><div class="sub">live portal views — rows touched by this step are highlighted <span class="legend"><span class="hl-swatch"></span> changed in this step</span></div></div>
+      <div class="ctrl">
+        <span class="up-label" id="upnext-label"></span>
+        <button class="btn btn-secondary btn-sm" id="sim-reset"><i data-lucide="rotate-ccw" class="lucide"></i> Reset</button>
+        <button class="btn btn-secondary btn-sm" id="sim-prev"><i data-lucide="chevron-left" class="lucide"></i> Prev</button>
+        <button class="btn btn-primary btn-sm" id="sim-next">Run next step <i data-lucide="chevron-right" class="lucide"></i></button>
+        <button class="btn btn-secondary btn-sm" id="sim-auto"><i data-lucide="play" class="lucide"></i> Auto-play</button>
+      </div>
+    </div>
+    <div class="sim-grid">
   <section class="panel" id="panel-idcol">
     <div class="panel-head"><span class="avatar" style="background:var(--mis)">ID</span><div class="flex-1"><div style="font-weight:500">IDCOL Staff</div><div class="small muted">Program Unit · Program-wide view</div></div><a class="link small" data-go="idcol" href="../idcol/dashboard.page.html">Open portal <i data-lucide="arrow-up-right" class="lucide w-4"></i></a></div>
     <div class="panel-impact" id="impact-idcol"></div>
@@ -83,7 +87,13 @@
     <div class="panel-body" id="body-household"></div>
   </section>
 </div>
-<details class="more mt-5" id="more"><summary><i data-lucide="chevron-right" class="lucide w-4"></i> Advanced demo detail</summary><div id="more-body" class="more-body"></div></details>
+    <div class="card mt-5 demo-detail"><div class="card-head"><i data-lucide="scroll-text" class="lucide"></i><h3>Demo detail</h3><span class="small muted">full narrative · requirement references · latest recorded changes</span></div><div id="more-body" class="more-body"></div></div>
+  </div>
+  <aside class="sim-pane" id="sim-pane">
+    <div class="pane-head"><span class="eyebrow">Step details</span><span class="tag" id="pane-step"></span><button class="btn btn-ghost btn-sm" id="pane-toggle" title="Show / hide step details"><i data-lucide="panel-right" class="lucide"></i></button></div>
+    <div id="story"></div>
+  </aside>
+</div>
 
 </main>
 </div>
@@ -150,19 +160,28 @@ function renderJsel(S){
 }
 function renderStory(S){
   var n=S.sim.step, steps=DRS.scenario.steps, el=$('#story');
-  if(n===0){ var j=JOURNEYS[0];
-    el.innerHTML='<div class="story-main"><div class="eyebrow">Ready to begin</div><h2>Pick a journey above, or press Next</h2><p class="muted" style="max-width:640px">Each journey runs real actions on one shared demo state. Everything you see here can also be opened in the full IDCOL, DA and Household portals.</p><div class="flex gap-2 wrap mt-3"><button class="btn btn-primary" data-j="1">'+ic('play')+' Start Journey 1 — '+esc(j.title)+'</button><a class="btn btn-secondary" href="../app/home.page.html">'+ic('home')+' Demo home</a></div></div><div class="story-side"><div class="eyebrow">The six journeys</div><ol class="bullets mt-2">'+JOURNEYS.map(function(j){return '<li>'+esc(j.title)+'</li>';}).join('')+'</ol></div>';
-    $('#sim-counter').textContent='· step 0 of '+steps.length; return; }
-  var st=steps[n-1], info=STEP[n], j=journeyOf(n), idx=j.steps.indexOf(n), next=n<steps.length?steps[n]:null, nextInfo=next?STEP[next.n]:null;
-  var strip=j.steps.map(function(s){var k=s<n?'done':s===n?'current':''; return '<button class="step-dot '+k+'" data-goto="'+s+'" title="Step '+s+'">'+(s<n?ic('check','w-4'):s)+'<span>'+esc(STEP[s].t)+'</span></button>';}).join('');
+  $('#pane-step').textContent='Step '+n+' of '+steps.length;
+  var sec=function(label,body){ return '<div class="ps"><div class="eyebrow">'+label+'</div>'+body+'</div>'; };
+  if(n===0){
+    el.innerHTML=sec('Ready to begin','<h2>Pick a journey, or press Start</h2><p class="small muted mt-2">Each journey runs real actions on one shared demo state. Everything shown in the three portals can also be opened as a full page.</p>')+
+      sec('The six journeys','<div class="step-list">'+JOURNEYS.map(function(j){return '<button class="step-row" data-j="'+j.n+'"><span class="n">'+j.n+'</span><span>'+esc(j.title)+'</span></button>';}).join('')+'</div>');
+    return; }
+  var st=steps[n-1], info=STEP[n], j=journeyOf(n);
+  var list=j.steps.length>1?'<div class="step-list">'+j.steps.map(function(s){var k=s<n?'done':s===n?'current':''; return '<button class="step-row '+k+'" data-goto="'+s+'"><span class="n">'+(s<n?ic('check','w-4'):s)+'</span><span>'+esc(STEP[s].t)+'</span></button>';}).join('')+'</div>':'';
   var ents=entities(n,S).map(function(e){return '<span class="ent"><span class="mono">'+esc(e.id)+'</span><span class="muted small">'+esc(e.name)+'</span>'+pill(e.st)+'</span>';}).join('');
-  el.innerHTML='<div class="story-main"><div class="flex items-center gap-2 wrap"><span class="eyebrow">Journey '+j.n+' of '+JOURNEYS.length+' · '+esc(j.title)+'</span><span class="small muted">· step '+n+' of '+steps.length+'</span></div><div class="small muted mt-1">'+esc(j.purpose)+'</div>'+
-    (j.steps.length>1?'<div class="step-strip mt-3">'+strip+'</div>':'')+
-    '<h2 class="mt-3">'+esc(info.t)+'</h2><div class="flex gap-1 wrap mt-1">'+modTags(st.modules)+'<span class="tag" style="border-style:dashed">'+ic('user','w-4')+' '+esc(st.who)+'</span></div>'+
-    '<div class="story-cols mt-4"><div><div class="eyebrow">What happened</div><ul class="bullets mt-2">'+info.what.map(function(w){return '<li>'+esc(w)+'</li>';}).join('')+'</ul></div><div><div class="eyebrow">Why the next step depends on it</div><div class="dep mt-2">'+ic('link','w-4')+' '+esc(info.dep)+'</div></div></div>'+
-    '<div class="up-next mt-4">'+(next?'<span class="eyebrow">Up next</span><span>Step '+next.n+' — '+esc(nextInfo.t)+'</span><button class="btn btn-primary btn-sm ml-auto" id="story-next">Run next step '+ic('chevron-right')+'</button>':'<span class="eyebrow">Scenario complete</span><span>All 11 steps done — keep exploring the portals, or Reset to run it again.</span><button class="btn btn-secondary btn-sm ml-auto" id="story-reset">'+ic('rotate-ccw')+' Reset</button>')+'</div></div>'+
-    '<div class="story-side"><div class="eyebrow">Entities involved</div><div class="ents mt-2">'+(ents||'<span class="small muted">—</span>')+'</div><div class="eyebrow mt-4">Open the relevant page</div><div class="qlinks mt-2">'+info.links.map(function(k){return linkBtn(k);}).join('')+'</div>'+(n===11?relatedSupport(S):'')+'</div>';
-  $('#sim-counter').textContent='· step '+n+' of '+steps.length;
+  el.innerHTML=sec('Journey '+j.n+' of '+JOURNEYS.length,'<div class="ps-journey">'+esc(j.title)+'</div><div class="small muted mt-1">'+esc(j.purpose)+'</div>'+list)+
+    sec('Current step','<h2>'+esc(info.t)+'</h2><div class="flex gap-1 wrap">'+modTags(st.modules)+'<span class="tag" style="border-style:dashed">'+ic('user','w-4')+' '+esc(st.who)+'</span></div>')+
+    sec('What happened','<ul class="bullets">'+info.what.map(function(w){return '<li>'+esc(w)+'</li>';}).join('')+'</ul>')+
+    sec('Why the next step depends on it','<div class="dep">'+ic('link','w-4')+' '+esc(info.dep)+'</div>')+
+    sec('Entities involved','<div class="ents">'+(ents||'<span class="small muted">—</span>')+'</div>')+
+    sec('Open the relevant page','<div class="qlinks stack">'+info.links.map(function(k){return linkBtn(k);}).join('')+'</div>'+(n===11?relatedSupport(S):''));
+}
+function renderUpNext(S){
+  var n=S.sim.step, steps=DRS.scenario.steps, el=$('#upnext-label'), nb=$('#sim-next');
+  if(n===0){ el.innerHTML='<span class="eyebrow">Start here</span><span>Journey 1 — '+esc(JOURNEYS[0].title)+'</span>'; nb.innerHTML='Start '+ic('chevron-right'); return; }
+  var next=n<steps.length?steps[n]:null;
+  el.innerHTML=next?'<span class="eyebrow">Up next</span><span><b>Step '+next.n+'</b> — '+esc(STEP[next.n].t)+'</span>':'<span class="eyebrow">Scenario complete</span><span>All 11 steps done — Reset to run it again</span>';
+  nb.innerHTML='Run next step '+ic('chevron-right');
 }
 function relatedSupport(S){
   var open=function(a,f){return a.filter(f).length;};
@@ -208,10 +227,10 @@ function bindIdcol(){
   UI.$$('#body-idcol [data-verify]').forEach(function(x){x.addEventListener('click',function(){UI.run(function(){DRS.act.verifyBatch(x.getAttribute('data-verify'),UI.actor());},'Batch verified — serials allotted to DA inventory');});});
   UI.$$('#body-idcol [data-inspect]').forEach(function(x){x.addEventListener('click',function(){inspectModal(x.getAttribute('data-inspect'));});});
   UI.$$('#body-idcol [data-claim]').forEach(function(x){x.addEventListener('click',function(){UI.run(function(){DRS.act.claimAction(x.getAttribute('data-claim'),x.getAttribute('data-action'),UI.actor());},'Claim '+x.getAttribute('data-action')+'d');});});
-  UI.$$('#body-idcol [data-cmd]').forEach(function(x){x.addEventListener('click',function(){var sys=x.getAttribute('data-sys'); if(sys==='*') sys=$('#ip-sys').value; UI.confirm({title:'Manual '+x.getAttribute('data-cmd')+' — '+sys,body:'Manual override by an authorised IDCOL agent. Logged with trigger "manual", operator and reason (§3.5.1).',reason:'e.g. safety inspection / fault cleared',ok:'Issue '+x.getAttribute('data-cmd'),danger:x.getAttribute('data-cmd')==='HALT'}).then(function(r){if(r) UI.run(function(){DRS.act.manualCommand(sys,x.getAttribute('data-cmd'),r,UI.actor());},x.getAttribute('data-cmd')+' issued via RMP');});});});
+  UI.$$('#body-idcol [data-cmd]').forEach(function(x){x.addEventListener('click',function(){var sys=x.getAttribute('data-sys'); if(sys==='*') sys=$('#ip-sys').value; UI.confirm({title:'Manual '+x.getAttribute('data-cmd')+' — '+sys,body:'Manual override by an authorised IDCOL agent. Logged with trigger "manual", operator and reason.',reason:'e.g. safety inspection / fault cleared',ok:'Issue '+x.getAttribute('data-cmd'),danger:x.getAttribute('data-cmd')==='HALT'}).then(function(r){if(r) UI.run(function(){DRS.act.manualCommand(sys,x.getAttribute('data-cmd'),r,UI.actor());},x.getAttribute('data-cmd')+' issued via RMP');});});});
 }
 function onboardDaModal(){
-  UI.modal({title:'Onboard Demand Aggregator',icon:'building-2',wide:true,body:'<div class="grid-2"><div class="field"><label>Legal name</label><input id="f-name" class="input" value="Sundarban Solar Foundation"></div><div class="field"><label>Legal form</label><select id="f-form" class="input"><option>NGO</option><option>MFI</option><option>Private</option></select></div><div class="field"><label>Registration no.</label><input id="f-reg" class="input" value="NGOAB-0417"></div><div class="field"><label>Districts</label><input id="f-dist" class="input" value="Khulna, Satkhira"></div><div class="field"><label>Refinance limit (৳)</label><input id="f-limit" class="input num" value="500000000"></div><div class="field"><label>Advance facility limit (৳)</label><input id="f-adv" class="input num" value="50000000"></div><div class="field"><label>Bank Guarantee (৳)</label><input id="f-bg" class="input num" value="100000000"></div><div class="field"><label>BG bank / expiry</label><div class="flex gap-2"><input id="f-bgbank" class="input" value="Janata Bank"><input id="f-bgexp" class="input" type="date" value="2027-09-30"></div></div><div class="field"><label>DSRA balance (৳)</label><input id="f-dsra" class="input num" value="2500000"></div><div class="field"><label>Personal guarantee</label><input id="f-pg" class="input" value="Dr. Selina Haque (ED)"></div></div><div class="callout small">Creates the DA master, two ledgers (Advance · Refinance) and the security register; recorded in the audit trail (§3.3.2).</div>',footer:'<button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" id="f-ok">Create DA</button>',onOpen:function(ov){$('#f-ok',ov).addEventListener('click',function(){UI.run(function(){DRS.act.onboardDA({name:$('#f-name').value,legalForm:$('#f-form').value,registrationNo:$('#f-reg').value,districts:$('#f-dist').value.split(',').map(function(s){return s.trim();}).filter(Boolean),limit:$('#f-limit').value,advanceLimit:$('#f-adv').value,bg:$('#f-bg').value,bgBank:$('#f-bgbank').value,bgExpiry:$('#f-bgexp').value,dsra:$('#f-dsra').value,pg:[$('#f-pg').value]},UI.actor()); UI.closeModal();},'DA onboarded — ledgers and security register created');});}});
+  UI.modal({title:'Onboard Demand Aggregator',icon:'building-2',wide:true,body:'<div class="grid-2"><div class="field"><label>Legal name</label><input id="f-name" class="input" value="Sundarban Solar Foundation"></div><div class="field"><label>Legal form</label><select id="f-form" class="input"><option>NGO</option><option>MFI</option><option>Private</option></select></div><div class="field"><label>Registration no.</label><input id="f-reg" class="input" value="NGOAB-0417"></div><div class="field"><label>Districts</label><input id="f-dist" class="input" value="Khulna, Satkhira"></div><div class="field"><label>Refinance limit (৳)</label><input id="f-limit" class="input num" value="500000000"></div><div class="field"><label>Advance facility limit (৳)</label><input id="f-adv" class="input num" value="50000000"></div><div class="field"><label>Bank Guarantee (৳)</label><input id="f-bg" class="input num" value="100000000"></div><div class="field"><label>BG bank / expiry</label><div class="flex gap-2"><input id="f-bgbank" class="input" value="Janata Bank"><input id="f-bgexp" class="input" type="date" value="2027-09-30"></div></div><div class="field"><label>DSRA balance (৳)</label><input id="f-dsra" class="input num" value="2500000"></div><div class="field"><label>Personal guarantee</label><input id="f-pg" class="input" value="Dr. Selina Haque (ED)"></div></div><div class="callout small">Creates the DA master, two ledgers (Advance · Refinance) and the security register; recorded in the audit trail.</div>',footer:'<button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" id="f-ok">Create DA</button>',onOpen:function(ov){$('#f-ok',ov).addEventListener('click',function(){UI.run(function(){DRS.act.onboardDA({name:$('#f-name').value,legalForm:$('#f-form').value,registrationNo:$('#f-reg').value,districts:$('#f-dist').value.split(',').map(function(s){return s.trim();}).filter(Boolean),limit:$('#f-limit').value,advanceLimit:$('#f-adv').value,bg:$('#f-bg').value,bgBank:$('#f-bgbank').value,bgExpiry:$('#f-bgexp').value,dsra:$('#f-dsra').value,pg:[$('#f-pg').value]},UI.actor()); UI.closeModal();},'DA onboarded — ledgers and security register created');});}});
 }
 function inspectModal(id){
   var S=DRS.state(); var insp=S.inspections.filter(function(x){return x.id===id;})[0]; var hh=G.household(insp.systemId); var claim=S.claims.filter(function(c){return c.systemId===insp.systemId;})[0];
@@ -240,7 +259,7 @@ function renderDa(S){
   } else if(t==='onboard'){
     var pm=G.daModels(daId,'panel'), im=G.daModels(daId,'inverter'), bm=G.daModels(daId,'battery');
     var opt=function(list){return list.length?list.map(function(m){return '<option value="'+m.cat.id+'">'+esc(m.cat.brand+' '+m.cat.model)+' — '+m.inStock+' in stock</option>';}).join(''):'<option value="">No stock — request a batch</option>';};
-    h+=card('Onboard household (models &amp; serials from my stock only)','<div class="grid-2"><div class="field"><label>Household name</label><input id="o-name" class="input" value="Rahima Begum"></div><div class="field"><label>NID / phone</label><div class="flex gap-2"><input id="o-nid" class="input" value="1989123400213"><input id="o-phone" class="input" value="01811-560213"></div></div><div class="field"><label>District / upazila</label><div class="flex gap-2"><select id="o-dist" class="input">'+da.districts.map(function(d){return '<option>'+d+'</option>';}).join('')+'</select><input id="o-upz" class="input" value="Dumuria"></div></div><div class="field"><label>Package</label><select id="o-kwp" class="input">'+S.settings.packages.map(function(p){return '<option value="'+p.kwp+'"'+(p.kwp===4?' selected':'')+'>'+p.kwp+' kWp · ceiling '+money(p.ceiling)+' · '+p.panels+' panels</option>';}).join('')+'</select></div><div class="field"><label>Contract price (৳)</label><input id="o-price" class="input num" value="340000"><div class="hint">Rejected above the package ceiling price.</div></div><div class="field"><label>Panel model</label><select id="o-pm" class="input">'+opt(pm)+'</select></div><div class="field"><label>Inverter model</label><select id="o-im" class="input">'+opt(im)+'</select></div><div class="field"><label>Battery model</label><select id="o-bm" class="input">'+opt(bm)+'</select></div><div class="field"><label>Serials</label><div class="small muted" id="o-serials">Next in-stock serials are picked automatically for the console; the full portal shows the serial drop-downs.</div></div><div class="field"><label>DA field inspection report</label><input id="o-inst" class="input" value="Md. Abdur Rouf (Team KHU-2)" placeholder="Installer sign-off (mandatory)"><div class="hint">Checklist ✓ · 6 photos · installer sign-off (§3.3.1)</div></div></div><button class="btn btn-primary" id="o-ok">'+ic('user-plus')+' Confirm onboarding</button>');
+    h+=card('Onboard household (models &amp; serials from my stock only)','<div class="grid-2"><div class="field"><label>Household name</label><input id="o-name" class="input" value="Rahima Begum"></div><div class="field"><label>NID / phone</label><div class="flex gap-2"><input id="o-nid" class="input" value="1989123400213"><input id="o-phone" class="input" value="01811-560213"></div></div><div class="field"><label>District / upazila</label><div class="flex gap-2"><select id="o-dist" class="input">'+da.districts.map(function(d){return '<option>'+d+'</option>';}).join('')+'</select><input id="o-upz" class="input" value="Dumuria"></div></div><div class="field"><label>Package</label><select id="o-kwp" class="input">'+S.settings.packages.map(function(p){return '<option value="'+p.kwp+'"'+(p.kwp===4?' selected':'')+'>'+p.kwp+' kWp · ceiling '+money(p.ceiling)+' · '+p.panels+' panels</option>';}).join('')+'</select></div><div class="field"><label>Contract price (৳)</label><input id="o-price" class="input num" value="340000"><div class="hint">Rejected above the package ceiling price.</div></div><div class="field"><label>Panel model</label><select id="o-pm" class="input">'+opt(pm)+'</select></div><div class="field"><label>Inverter model</label><select id="o-im" class="input">'+opt(im)+'</select></div><div class="field"><label>Battery model</label><select id="o-bm" class="input">'+opt(bm)+'</select></div><div class="field"><label>Serials</label><div class="small muted" id="o-serials">Next in-stock serials are picked automatically for the console; the full portal shows the serial drop-downs.</div></div><div class="field"><label>DA field inspection report</label><input id="o-inst" class="input" value="Md. Abdur Rouf (Team KHU-2)" placeholder="Installer sign-off (mandatory)"><div class="hint">Checklist ✓ · 6 photos · installer sign-off</div></div></div><button class="btn btn-primary" id="o-ok">'+ic('user-plus')+' Confirm onboarding</button>');
   } else if(t==='coll'){
     h+=card('Record collection (cash / bank / NPSB receipt)','<div class="grid-2"><div class="field"><label>Household</label><select id="c-sys" class="input">'+myHH.map(function(x){return '<option value="'+x.systemId+'"'+(x.systemId===S.sim.activeSystemId?' selected':'')+'>'+x.systemId+' · '+esc(x.name)+'</option>';}).join('')+'</select></div><div class="field"><label>Amount (৳)</label><input id="c-amt" class="input num" value="'+(function(){var b=G.balances(S.sim.activeSystemId);return b?(b.overdue||(b.next?b.next.amount:0)):0;})()+'"></div><div class="field"><label>Channel</label><select id="c-ch" class="input"><option>Cash</option><option>Bank</option><option>bKash</option><option>Nagad</option></select></div><div class="field"><label>Reference</label><input id="c-ref" class="input" placeholder="bank receipt / agent slip"></div></div><button class="btn btn-primary btn-sm" id="c-ok">'+ic('receipt')+' Record &amp; issue receipt</button>');
     h+=card('Recent payments (my portfolio)',tbl(['Date','System','Amount','Channel','Status'],S.payments.filter(function(p){return p.daId===daId;}).slice(-6).reverse(),[function(p){return F.date(p.date);},function(p){return '<span class="mono small">'+p.systemId+'</span>';},function(p){return '<span class="num">'+money(p.amount)+'</span>';},function(p){return p.channel;},function(p){return pill(p.status);}],'No collections yet'));
@@ -280,13 +299,14 @@ function renderHh(S){
   if(t==='loan') UI.scheduleTable('#hh-sched',sid);
   if(t==='receipts') UI.paymentsTable('#hh-pays',S.payments.filter(function(x){return x.systemId===sid;}).slice().reverse());
   if(t==='notif') UI.notifList('#hh-notif','household:'+sid,10);
-  UI.$$('#body-household [data-pay]').forEach(function(x){x.addEventListener('click',function(){var ch=x.getAttribute('data-pay'); var amt=+$('#hp-amt').value; if(ch==='Bank'){UI.modal({title:'Enter bank receipt (NPSB transfer)',icon:'landmark',body:'<div class="grid-2"><div class="field"><label>Bank</label><select class="input" id="bk-bank"><option>Sonali Bank</option><option>BRAC Bank</option><option>Dutch-Bangla Bank</option></select></div><div class="field"><label>Transfer reference</label><input id="bk-ref" class="input mono" value="NPSB'+Math.floor(1e7+Math.random()*9e7)+'"></div><div class="field"><label>Amount (৳)</label><input id="bk-amt" class="input num" value="'+amt+'"></div><div class="field"><label>Date</label><input class="input" value="'+F.date(DRS.state().sim.today)+'" disabled></div></div><div class="small muted">A machine-generated receipt is issued in real time (§3.6).</div>',footer:'<button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" id="bk-ok">Submit receipt</button>',onOpen:function(ov){$('#bk-ok',ov).addEventListener('click',function(){UI.run(function(){var p=DRS.act.recordPayment(sid,{amount:$('#bk-amt',ov).value,channel:'Bank',reference:$('#bk-ref',ov).value},hh.name); UI.closeModal(); TAB.household='home'; UI.showReceipt(p.id);},'Receipt issued');});}});return;} UI.modal({title:ch+' checkout',icon:'smartphone',body:'<div class="dl"><dt>Merchant</dt><dd>IDCOL DRS · '+esc((G.da(hh.daId)||{}).name||'')+' Program account</dd><dt>Amount</dt><dd class="num"><b>'+money(amt)+'</b></dd><dt>Account</dt><dd class="mono">'+esc(hh.phone)+'</dd></div><div class="field"><label>'+(ch==='Card'?'Card number':ch+' PIN / OTP')+'</label><input class="input mono" value="'+(ch==='Card'?'4111 •••• •••• 1234':'••••• / 482913')+'" disabled></div><div class="small muted">Simulated payment service provider. In production the PSP posts the payment to the CRM in real time (§3.6).</div>',footer:'<button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" id="pay-ok">Confirm payment</button>',onOpen:function(ov){$('#pay-ok',ov).addEventListener('click',function(){var btn=this;btn.disabled=true;btn.textContent='Processing…';setTimeout(function(){UI.run(function(){var p=DRS.act.recordPayment(sid,{amount:amt,channel:ch},'Gateway (auto-post)'); UI.closeModal(); TAB.household='home'; UI.showReceipt(p.id);},'Payment successful — receipt issued');},700);});}});});});
+  UI.$$('#body-household [data-pay]').forEach(function(x){x.addEventListener('click',function(){var ch=x.getAttribute('data-pay'); var amt=+$('#hp-amt').value; if(ch==='Bank'){UI.modal({title:'Enter bank receipt (NPSB transfer)',icon:'landmark',body:'<div class="grid-2"><div class="field"><label>Bank</label><select class="input" id="bk-bank"><option>Sonali Bank</option><option>BRAC Bank</option><option>Dutch-Bangla Bank</option></select></div><div class="field"><label>Transfer reference</label><input id="bk-ref" class="input mono" value="NPSB'+Math.floor(1e7+Math.random()*9e7)+'"></div><div class="field"><label>Amount (৳)</label><input id="bk-amt" class="input num" value="'+amt+'"></div><div class="field"><label>Date</label><input class="input" value="'+F.date(DRS.state().sim.today)+'" disabled></div></div><div class="small muted">A machine-generated receipt is issued in real time.</div>',footer:'<button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" id="bk-ok">Submit receipt</button>',onOpen:function(ov){$('#bk-ok',ov).addEventListener('click',function(){UI.run(function(){var p=DRS.act.recordPayment(sid,{amount:$('#bk-amt',ov).value,channel:'Bank',reference:$('#bk-ref',ov).value},hh.name); UI.closeModal(); TAB.household='home'; UI.showReceipt(p.id);},'Receipt issued');});}});return;} UI.modal({title:ch+' checkout',icon:'smartphone',body:'<div class="dl"><dt>Merchant</dt><dd>IDCOL DRS · '+esc((G.da(hh.daId)||{}).name||'')+' Program account</dd><dt>Amount</dt><dd class="num"><b>'+money(amt)+'</b></dd><dt>Account</dt><dd class="mono">'+esc(hh.phone)+'</dd></div><div class="field"><label>'+(ch==='Card'?'Card number':ch+' PIN / OTP')+'</label><input class="input mono" value="'+(ch==='Card'?'4111 •••• •••• 1234':'••••• / 482913')+'" disabled></div><div class="small muted">Simulated payment service provider. In production the PSP posts the payment to the CRM in real time.</div>',footer:'<button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" id="pay-ok">Confirm payment</button>',onOpen:function(ov){$('#pay-ok',ov).addEventListener('click',function(){var btn=this;btn.disabled=true;btn.textContent='Processing…';setTimeout(function(){UI.run(function(){var p=DRS.act.recordPayment(sid,{amount:amt,channel:ch},'Gateway (auto-post)'); UI.closeModal(); TAB.household='home'; UI.showReceipt(p.id);},'Payment successful — receipt issued');},700);});}});});});
 }
 
 function renderChain(S){
-  var n=S.sim.step, el=$('#chain'); if(!n){ el.innerHTML=''; return; }
+  var n=S.sim.step, el=$('#chain');
+  if(!n){ el.innerHTML='<span class="small muted chain-empty">'+ic('git-branch','w-4')+' Pick a journey to see how each step connects the roles</span>'; return; }
   var R={idcol:['IDCOL Staff','landmark','mis'],da:['DA Agent','building-2','rmp'],hh:['Household','home','crm'],sys:['System / clock','clock','sys']};
-  el.innerHTML='<div class="eyebrow">How this step connects the roles</div><div class="chain">'+STEP[n].chain.map(function(c){var r=R[c[0]]; return '<div class="chain-node"><span class="lane-ic bg-'+r[2]+'">'+ic(r[1])+'</span><div><div class="cn-role">'+r[0]+'</div><div class="cn-text">'+esc(c[1])+'</div></div></div>';}).join('<span class="chain-arrow">'+ic('arrow-right')+'</span>')+'</div>';
+  el.innerHTML=STEP[n].chain.map(function(c){var r=R[c[0]]; return '<div class="chain-node"><span class="lane-ic bg-'+r[2]+'">'+ic(r[1])+'</span><div><div class="cn-role">'+r[0]+'</div><div class="cn-text">'+esc(c[1])+'</div></div></div>';}).join('<span class="chain-arrow">'+ic('arrow-right')+'</span>');
 }
 function renderPanelImpact(S){
   var n=S.sim.step, info=n?STEP[n]:null;
@@ -304,12 +324,12 @@ function renderMore(S){
     '<div><div class="eyebrow">Latest changes recorded</div><div class="table-wrap mt-2"><table class="tbl tbl-compact"><thead><tr><th>Time</th><th>Actor</th><th>Action</th><th>Entity</th></tr></thead><tbody>'+S.audit.slice(-8).reverse().map(function(a){return '<tr><td class="mono small">'+F.dt(a.ts)+'</td><td class="small">'+esc(a.actor)+'</td><td class="mono small">'+esc(a.action)+'</td><td class="mono small">'+esc(a.entityId)+'</td></tr>';}).join('')+'</tbody></table></div><a class="link small" href="../idcol/audit-log.page.html">Full audit trail →</a></div></div>';
 }
 function renderAll(S){
-  renderJsel(S); renderStory(S); renderChain(S); renderPanelImpact(S);
+  renderJsel(S); renderChain(S); renderPanelImpact(S); renderStory(S); renderUpNext(S);
   var sel=$('#sim-da'); sel.innerHTML=S.das.map(function(d){return '<option value="'+d.id+'"'+(d.id===S.sim.activeDaId?' selected':'')+'>'+esc(d.name)+'</option>';}).join('');
   var sh=$('#sim-hh'); sh.innerHTML=S.households.map(function(x){return '<option value="'+x.systemId+'"'+(x.systemId===S.sim.activeSystemId?' selected':'')+'>'+esc(x.name)+' · '+x.systemId+'</option>';}).join('');
   UI.$$('.panel-tabs').forEach(function(bar){var role=bar.getAttribute('data-panel');UI.$$('.panel-tab',bar).forEach(function(t){t.classList.toggle('active',t.getAttribute('data-tab')===TAB[role]);});});
   renderIdcol(S); renderDa(S); renderHh(S); markRows(S); renderMore(S);
-  $('#sim-date').textContent=F.date(S.sim.today); $('#sim-prev').disabled=S.sim.step===0; $('#sim-next').disabled=S.sim.step>=DRS.scenario.steps.length; UI.icons(); bind();
+  $('#sim-prev').disabled=S.sim.step===0; $('#sim-next').disabled=S.sim.step>=DRS.scenario.steps.length; UI.icons(); bind();
 }
 function highlight(S){ var ch=S.sim.lastChanged||[]; ['idcol','da','household'].forEach(function(r){var el=$('#panel-'+r); if(el) el.classList.toggle('updated',ch.indexOf(r)>=0);}); setTimeout(function(){UI.$$('.panel').forEach(function(p){p.classList.remove('updated');});},3500); }
 function setFocus(){ var S=DRS.state(), f=focus(S.sim.step||1); if(G.da(f.da)&&S.sim.activeDaId!==f.da) DRS.act.setActiveDa(f.da); if(G.household(f.hh)&&S.sim.activeSystemId!==f.hh) DRS.act.setActiveSystem(f.hh); }
@@ -320,17 +340,20 @@ function bind(){
   UI.$$('[data-go]').forEach(function(a){a.addEventListener('click',function(){setFocus();});});
   var sn=$('#story-next'); if(sn) sn.addEventListener('click',function(){$('#sim-next').click();});
   var sr=$('#story-reset'); if(sr) sr.addEventListener('click',function(){$('#sim-reset').click();});
+  var up=$('#upnext-prev'); if(up) up.addEventListener('click',function(){$('#sim-prev').click();});
 }
+function setPane(open){ $('#sim-layout').classList.toggle('pane-closed',!open); try{ localStorage.setItem('drs-sim-pane',open?'open':'closed'); }catch(e){} }
+function paneOpen(){ try{ return localStorage.getItem('drs-sim-pane')!=='closed'; }catch(e){ return true; } }
 UI.page({role:'app',page:'simulation',render:function(S){renderAll(S);},init:function(S){
   $('#sim-next').addEventListener('click',function(){var n=DRS.state().sim.step+1; applyStepTabs(n); var st=DRS.scenario.next(); if(st){ setFocus(); highlight(DRS.state()); UI.toast('Step '+st.n+' done — '+STEP[st.n].t,'success'); } });
   $('#sim-prev').addEventListener('click',function(){applyStepTabs(DRS.state().sim.step-1); DRS.scenario.prev(); highlight(DRS.state());});
   $('#sim-reset').addEventListener('click',function(){UI.confirm({title:'Reset the demo',body:'Returns every portal to the starting data and step 0.',ok:'Reset',danger:true,icon:'rotate-ccw'}).then(function(ok){if(ok){TAB={idcol:'dash',da:'dash',household:'home'};DRS.reset();UI.toast('Demo reset','success');}});});
   $('#sim-auto').addEventListener('click',function(){var b=this; if(autoTimer){clearInterval(autoTimer);autoTimer=null;b.innerHTML=ic('play')+' Auto-play';UI.icons();return;} b.innerHTML=ic('pause')+' Pause'; UI.icons(); autoTimer=setInterval(function(){ if(DRS.scenario.step()>=DRS.scenario.steps.length){clearInterval(autoTimer);autoTimer=null;b.innerHTML=ic('play')+' Auto-play';UI.icons();return;} $('#sim-next').click(); },4500);});
-  $('#sim-d1').addEventListener('click',function(){DRS.act.advanceClock(1); highlight(DRS.state()); UI.toast('Clock advanced to '+F.date(DRS.state().sim.today));});
-  $('#sim-d10').addEventListener('click',function(){DRS.act.advanceClock(10); highlight(DRS.state()); UI.toast('Clock advanced to '+F.date(DRS.state().sim.today));});
   UI.$$('.panel-tabs').forEach(function(bar){var role=bar.getAttribute('data-panel');bar.addEventListener('click',function(e){var t=e.target.closest('.panel-tab');if(!t)return;TAB[role]=t.getAttribute('data-tab');renderAll(DRS.state());});});
   $('#sim-da').addEventListener('change',function(e){DRS.act.setActiveDa(e.target.value);});
   $('#sim-hh').addEventListener('change',function(e){DRS.act.setActiveSystem(e.target.value);});
+  var setSh=function(){ var h=$('.sim-head'); if(h) document.documentElement.style.setProperty('--sh', h.offsetHeight+'px'); }; setSh(); window.addEventListener('resize',setSh); window.addEventListener('drs:change',function(){ setTimeout(setSh,0); });
+  setPane(paneOpen()); $('#pane-toggle').addEventListener('click',function(){setPane($('#sim-layout').classList.contains('pane-closed'));});
   window.addEventListener('drs:change',function(e){ if(e.detail&&e.detail.remote) highlight(DRS.state()); });
   var q=UI.qs('journey'); if(q) selectJourney(+q);
 }});

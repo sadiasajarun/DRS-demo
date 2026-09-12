@@ -15,6 +15,8 @@ A connected demo of the Domestic Rooftop Solar (DRS) Program web platform across
 
 Shared files: `drs-sim.js` (state engine: seed data, domain rules, scenario), `drs-ui.js` (shell + renderers), `drs-theme.css` (design system).
 
+Guided walkthrough: an 18-step "How to use this prototype" tour (every role portal and the simulation) is available from the **Walkthrough** link on the home page or the **?** help button in the top bar.
+
 Demo tips: on IDCOL pages use the top-bar **acting user** selector to show maker-checker (review as A. Karim, approve as S. Chowdhury). **Reset data** (profile menu) restores the seed. Business thresholds shown in the demo are illustrative and labelled as such.
 
 All data is simulated in your browser; nothing is sent anywhere.
