@@ -5,10 +5,10 @@
 <title>DA Dashboard — IDCOL DRS</title>
 <meta name="description" content="IDCOL Domestic Rooftop Solar platform — interactive demo prototype — DA Dashboard">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Bengali:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../drs-theme.css?v=22">
+<link rel="stylesheet" href="../drs-theme.css?v=28">
 <script src="https://cdn.jsdelivr.net/npm/lucide@0.454.0/dist/umd/lucide.min.js"></script>
 <script src="../drs-sim.js?v=7"></script>
-<script src="../drs-ui.js?v=11"></script>
+<script src="../drs-ui.js?v=12"></script>
 
 </head>
 <body data-role="da" data-page="dashboard">
@@ -46,17 +46,18 @@
 <main class="content">
 <div class="page-head"><div><div class="crumbs">DA portal</div><div class="flex items-center gap-3"></div><h1><span id="dd-name">DA</span> — dashboard</h1><div class="sub">Portfolio, inventory, collections, claims, tickets and facilities for this Demand Aggregator only.</div></div><div class="actions"><a class="btn btn-primary" href="../da/onboard-household.page.html"><i data-lucide="user-plus" class="lucide"></i> Onboard household</a><a class="btn btn-secondary" href="../da/collections.page.html"><i data-lucide="receipt" class="lucide"></i> Record collection</a><a class="btn btn-secondary" href="../da/claims.page.html"><i data-lucide="banknote" class="lucide"></i> Prepare refinance claim</a></div></div><div class="callout small" style="margin-bottom:16px"><i data-lucide="lock" class="lucide"></i> <b>DA-specific portfolio</b> — only <b id="wall-da"></b>'s data is visible here. Use the profile switcher to change DA.</div>
 <div class="kpis" id="da-kpis"></div>
-<div class="grid-3 mt-4">
-<div class="card" style=""><div class="card-head"><i data-lucide="bar-chart-3" class="lucide"></i><h3>Installations vs my target</h3><span class="small muted">systems / month</span></div><div class="card-body"><div id="da-chart-inst"></div></div></div>
-<div class="card" style=""><div class="card-head"><i data-lucide="wallet" class="lucide"></i><h3>Collections — last 14 days</h3><span class="small muted">৳ / day · all channels</span></div><div class="card-body"><div id="da-chart-coll"></div></div></div>
+<div class="grid-2 two-col-wide" style="grid-template-columns:1.5fr 1fr">
+<div class="card" style=""><div class="card-head"><i data-lucide="alert-triangle" class="lucide"></i><h3>Households needing attention</h3><span class="small muted">overdue · inspection · claims · tickets</span></div><div class="table-wrap"><div class="table-wrap"><table class="tbl"><thead><tr><th>System</th><th>Household</th><th>Issue</th><th>Status</th><th></th></tr></thead><tbody id="da-attn"></tbody></table></div></div></div>
 <div class="card" style=""><div class="card-head"><i data-lucide="bell" class="lucide"></i><h3>Notifications</h3><span class="small muted">inspections · claims · tickets</span></div><div class="p-0"><div id="da-notif"></div></div></div>
 </div>
-<div class="grid-2 mt-4">
-<div class="card" style=""><div class="card-head"><i data-lucide="alert-triangle" class="lucide"></i><h3>Households needing attention</h3></div><div class="table-wrap"><div class="table-wrap"><table class="tbl tbl-compact"><thead><tr><th>System</th><th>Household</th><th>Issue</th><th>Status</th><th></th></tr></thead><tbody id="da-attn"></tbody></table></div></div></div>
-<div class="section-gap">
+<div class="grid-2 mt-6">
+<div class="card" style=""><div class="card-head"><i data-lucide="bar-chart-3" class="lucide"></i><h3>Installations vs my target</h3><span class="small muted">systems / month</span></div><div class="card-body"><div id="da-chart-inst"></div></div></div>
+<div class="card" style=""><div class="card-head"><i data-lucide="wallet" class="lucide"></i><h3>Collections — last 14 days</h3><span class="small muted">৳ / day · all channels</span></div><div class="card-body"><div id="da-chart-coll"></div></div></div>
+</div>
+<div class="section-head mt-6"><h2>Facilities with IDCOL</h2><span class="sub">secondary — full detail on the IDCOL Facility page</span></div>
+<div class="grid-2">
 <div class="card" style=""><div class="card-head"><i data-lucide="landmark" class="lucide"></i><h3>Refinance facility with IDCOL</h3><a class="link small ml-auto" href="../da/idcol-facility.page.html">Details →</a></div><div class="card-body"><div id="da-fac"></div></div></div>
 <div class="card" style=""><div class="card-head"><i data-lucide="hand-coins" class="lucide"></i><h3>Advance facility with IDCOL</h3><span class="tag">separate account</span><a class="link small ml-auto" href="../da/idcol-facility.page.html">Details →</a></div><div class="card-body"><div id="da-adv"></div></div></div>
-</div>
 </div>
 </main>
 </div>

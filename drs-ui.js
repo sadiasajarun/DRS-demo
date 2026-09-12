@@ -35,6 +35,7 @@
     if (!all.length) { if (foot) foot.remove(); el.innerHTML = '<tr class="empty"><td colspan="' + cols.length + '">' + esc(opts.empty || 'No records yet — run the scenario or use the actions above.') + '</td></tr>'; return; }
     el.innerHTML = rows.map(function (r, i) { var tr = '<tr' + (opts.rowClass ? ' class="' + opts.rowClass(r) + '"' : '') + (opts.href ? ' class="row-link" data-href="' + opts.href(r) + '"' : '') + '>'; cols.forEach(function (c) { var v = typeof c === 'function' ? c(r, i) : r[c]; var cls = (typeof c === 'object' && c.cls) ? c.cls : ''; tr += '<td' + (cls ? ' class="' + cls + '"' : '') + '>' + (v == null ? '—' : v) + '</td>'; }); return tr + '</tr>'; }).join('');
     if (opts.href) $$('tr.row-link', el).forEach(function (tr) { tr.addEventListener('click', function (e) { if (e.target.closest('a,button,select,input')) return; location.href = tr.getAttribute('data-href'); }); });
+    var tb = el.closest('table'); if (tb) { var labels = $$('thead th', tb).map(function (th) { return th.textContent.trim(); }); if (labels.length) { tb.classList.add('tbl-cards'); $$('tr', el).forEach(function (tr) { $$('td', tr).forEach(function (td, i) { td.setAttribute('data-label', labels[i] || ''); }); }); } }
     icons();
   }
   function td(v, cls) { return { cls: cls, f: v }; }
