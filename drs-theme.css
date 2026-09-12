@@ -752,3 +752,22 @@ body[data-role=app][data-page=home] .content{padding-top:24px}
 @media (max-width:1100px){.lp-roles{grid-template-columns:repeat(2,minmax(0,1fr))}.lp-covers{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:900px){.lp-hero{grid-template-columns:1fr;gap:28px;padding:20px 0 32px}.lp-hero h1{font-size:30px}.lp-hero-visual{justify-content:flex-start}.lp-sim{grid-template-columns:1fr;padding:24px}.lp-sim-action{justify-items:stretch;min-width:0}.lp-section{margin-top:40px}}
 @media (max-width:600px){.lp-roles,.lp-covers{grid-template-columns:1fr}.lp-cta .btn{width:100%}.lp-hero h1{font-size:27px}.lp h2{font-size:21px}.lp-chain{max-width:none}}
+
+/* landing page v2 order: roles first, compact simulation, horizontal role chain, explanatory process */
+.lp-v2 .lp-first{margin-top:12px}
+.lp-v2 .lp-section{margin-top:56px}
+.lp-v2 .lp-section-head{margin-bottom:22px}
+.lp-v2 .lp-sim-compact{margin-top:48px;padding:26px 30px;gap:24px}
+.lp-v2 .lp-sim-compact h2{font-size:22px}
+.lp-v2 .lp-sim-compact p{margin:8px 0 14px}
+.lp-v2 .lp-sim-compact .lp-flow-step{padding:7px 12px;font-size:13px}
+.lp-v2 .lp-sim-action .btn-lg{height:46px}
+.lp-chain-h{display:flex;align-items:stretch;gap:12px;max-width:none;padding:0;border:0;background:transparent;justify-items:stretch}
+.lp-chain-h .lp-chain-node{flex:1 1 0;background:#fff;padding:16px 18px}
+.lp-chain-h .lp-chain-link{align-self:center;flex-shrink:0}
+.lp-process .lp-flow-step{background:var(--surface-2);border-color:var(--border);font-weight:500;color:var(--text)}
+.lp-process .lp-flow-ic{color:var(--rmp)}
+.lp-process .lp-flow-arrow{color:var(--border-strong)}
+.lp-v2 .lp-foot{margin-top:56px}
+@media (max-width:900px){.lp-v2 .lp-section{margin-top:44px}.lp-v2 .lp-sim-compact{margin-top:40px;padding:22px}.lp-chain-h{flex-direction:column;gap:6px}.lp-chain-h .lp-chain-link{transform:rotate(90deg)}}
+@media (max-width:600px){.lp-v2 .lp-role .btn-primary{width:100%}}
